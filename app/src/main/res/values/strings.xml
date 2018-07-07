@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">HelloAndroid</string>
+    <string name="small_float_view_content">small</string>
+    <string name="close">close</string>
+    <string name="back">back</string>
 </resources>
