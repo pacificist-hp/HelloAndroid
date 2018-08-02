@@ -6,33 +6,84 @@
 
 #include <android/log.h>
 
+#include <binder/IPCThreadState.h>
+#include <binder/ProcessState.h>
+#include <binder/IServiceManager.h>
+
+#include "NativeService.h"
+
 #define TAG "NativeService"
 #define ALOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__);
+
+#ifndef USE_ONLOAD
+#include "com_android_pacificist_helloandroid_NativeService.h"
+#endif
+
+using namesapce android;
 
 #ifdef USE_ONLOAD
 static jint com_android_pacificist_helloandroid_NativeService_start(
         JNIEnv* env, jobject thiz, jstring params) {
-    ALOGD("onload:com_android_pacificist_helloandroid_NativeService_start");
+    ALOGD("com_android_pacificist_helloandroid_NativeService_start");
 #else
 extern "C" {
 JNIEXPORT jint JNICALL Java_com_android_pacificist_helloandroid_NativeService__1start(
-        JNIEnv* env, jobject thiz, jstring params) {
-    ALOGD("export:JNICALL Java_com_android_pacificist_helloandroid_NativeService__1start");
+        JNIEnv* env, jclass clazz, jstring params) {
+    ALOGD("Java_com_android_pacificist_helloandroid_NativeService__1start");
 #endif
-
     const char *str = env->GetStringUTFChars(params, NULL);
-    ALOGD("native: %s", str);
-    env->ReleaseStringUTFChars(params, str);
+    ALOGD("native start: %s", str);
 
+    NativeService::instantiate();
+    ProcessState::self()->startThreadPool();
+    printf("NativeService is starting now");
+    IPCThreadState::self()->joinThreadPool();
+
+    env->ReleaseStringUTFChars(params, str);
     return 0;
 }
+#ifndef USE_ONLOAD
+}
+#endif
 
+#ifdef USE_ONLOAD
+static jint com_android_pacificist_helloandroid_NativeService_print(
+        JNIEnv* env, jobject thiz, jstring message) {
+    ALOGD("com_android_pacificist_helloandroid_NativeService_print");
+#else
+extern "C" {
+JNIEXPORT jint JNICALL Java_com_android_pacificist_helloandroid_NativeService__1print(
+        JNIEnv* env, jclass clazz, jstring message) {
+    ALOGD("Java_com_android_pacificist_helloandroid_NativeService__1print");
+#endif
+    const char *str = env->GetStringUTFChars(message, NULL);
+    ALOGD("native print: %s", str);
+
+    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IBinder> b;
+    sp<INativeService> sNativeService;
+
+    do {
+        b = sm->getService(String16("android.pacificist.INativeService"));
+        if (0 != b)
+        	break;
+        printf("NativeService is not working, waiting...\n");
+        usleep(500000);
+    } while (true)
+
+    sNativeService = interface_cast<INativeService>(b);
+    sNativeService->print(str);
+
+    env->ReleaseStringUTFChars(message, str);
+    return 0;
+}
 
 #ifndef USE_ONLOAD
 }
 #else
 static JNINativeMethod nativeMethods[] = {
-    {"_start", "(Ljava/lang/String;)I", (void *) com_android_pacificist_helloandroid_NativeService_start}
+    {"_start", "(Ljava/lang/String;)I", (void *) com_android_pacificist_helloandroid_NativeService_start},
+    {"_print", "(Ljava/lang/String;)I", (void *) com_android_pacificist_helloandroid_NativeService_print}
 };
 
 static int registerNativeMethods(JNIEnv *env) {

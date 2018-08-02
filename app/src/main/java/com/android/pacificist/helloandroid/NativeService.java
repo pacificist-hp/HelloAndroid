@@ -19,8 +19,14 @@ public class NativeService {
 
     public static void start(String params) {
         int ret =_start(params);
-        Log.i(TAG, "NativeService.start: " + ret);
+        Log.i(TAG, "Java: NativeService.start: " + ret);
+    }
+
+    public static void print(String message) {
+        int ret = _print(message);
+        Log.i(TAG, "Java: NativeService.print: " + ret);
     }
 
     private static native int _start(String params);
+    private static native int _print(String message);
 }
