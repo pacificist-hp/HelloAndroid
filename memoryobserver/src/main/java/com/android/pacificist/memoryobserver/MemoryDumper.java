@@ -26,10 +26,10 @@ public class MemoryDumper {
         return info;
     }
 
-    static boolean isAllocatedMemoryTooMany() {
+    static boolean isMemoryLow() {
         Runtime runtime = Runtime.getRuntime();
         long avail = runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
-        return avail * 1.0f / runtime.maxMemory() < 0.05;
+        return avail * 1.0f / runtime.maxMemory() < 0.05f;
     }
 
     @SuppressLint("DefaultLocale")

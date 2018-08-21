@@ -24,7 +24,7 @@ public class ActivityDumper {
         sActivities.put(activity, 0);
     }
 
-    public static Map<String, Integer> getNumberOfActivities() {
+    public static Map<String, Integer> getActivitiesInfo() {
         Map<String, Integer> info = new HashMap<>();
         for (Activity a : sActivities.keySet()) {
             String key = a.getLocalClassName();

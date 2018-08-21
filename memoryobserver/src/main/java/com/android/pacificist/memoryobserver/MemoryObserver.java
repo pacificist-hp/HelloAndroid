@@ -8,8 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.util.Map;
-
 /**
  * Created by pacificist on 2018/7/8.
  */
@@ -58,7 +56,7 @@ public class MemoryObserver {
     private static ComponentCallbacks2 sReporter = new ComponentCallbacks2() {
         @Override
         public void onTrimMemory(int level) {
-            if (level == TRIM_MEMORY_UI_HIDDEN && MemoryDumper.isAllocatedMemoryTooMany()) {
+            if (level == TRIM_MEMORY_UI_HIDDEN /*&& MemoryDumper.isMemoryLow()*/) {
                 new ReportTask().execute();
             }
         }
@@ -96,17 +94,9 @@ public class MemoryObserver {
         @Override
         protected Void doInBackground(Void... voids) {
             GcTrigger.DEFAULT.runGc();
-            Map<String, String> memoryInfo = MemoryDumper.getMemoryInfo();
-            Log.w(TAG, "memory info:");
-            for (Map.Entry<String, String> entry : memoryInfo.entrySet()) {
-                Log.w(TAG, entry.getKey() + " : " + entry.getValue());
-            }
-            Log.w(TAG, "activity info:");
-            Map<String, Integer> activities = ActivityDumper.getNumberOfActivities();
-            for (Map.Entry<String, Integer> entry : activities.entrySet()) {
-                // report the num of activities which can not be collected by gc
-                Log.w(TAG, entry.getKey() + " : " + String.valueOf(entry.getValue()));
-            }
+            Log.w(TAG, "memory:" + MemoryDumper.getMemoryInfo().toString());
+            Log.w(TAG, "activity:" + ActivityDumper.getActivitiesInfo());
+            Log.w(TAG, "thread:" + ThreadDumper.getThreadsInfo());
             return null;
         }
     }
