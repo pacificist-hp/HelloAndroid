@@ -56,7 +56,7 @@ public class MemoryObserver {
     private static ComponentCallbacks2 sReporter = new ComponentCallbacks2() {
         @Override
         public void onTrimMemory(int level) {
-            if (level == TRIM_MEMORY_UI_HIDDEN /*&& MemoryDumper.isMemoryLow()*/) {
+            if (level == TRIM_MEMORY_UI_HIDDEN && MemoryDumper.isMemoryLow()) {
                 new ReportTask().execute();
             }
         }
