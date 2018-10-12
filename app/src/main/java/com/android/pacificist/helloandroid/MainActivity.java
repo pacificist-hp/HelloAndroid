@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.android.pacificist.helloandroid.cardview.CardViewItem;
+import com.android.pacificist.helloandroid.circleprogressbar.CircleProgressBarItem;
 import com.android.pacificist.helloandroid.gifview.GifViewItem;
 
 import java.util.ArrayList;
@@ -28,8 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
     private List<CustomViewItem> getCustomViewItems() {
         List<CustomViewItem> items = new ArrayList<>();
-        items.add(new CardViewItem());
+        items.add(new CircleProgressBarItem());
         items.add(new GifViewItem());
+        items.add(new CardViewItem());
         return items;
     }
 }

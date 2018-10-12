@@ -1,0 +1,16 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bar="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <com.android.pacificist.helloandroid.circleprogressbar.CircleProgressBar
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        bar:fstColor="@android:color/holo_orange_dark"
+        bar:sedColor="@android:color/holo_blue_bright"
+        bar:stroke="10dp"
+        bar:progressTextColor="@android:color/holo_red_dark"
+        bar:speed="10" />
+
+</FrameLayout>

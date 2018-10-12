@@ -1,7 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- CircleProgressBar attrs -->
+    <attr name="fstColor" format="color" />
+    <attr name="sedColor" format="color" />
+    <attr name="stroke" format="dimension" />
+    <attr name="speed" format="integer" />
+    <attr name="showProgressValue" format="boolean" />
+    <attr name="progressTextColor" format="color" />
+    <attr name="progressTextSize" format="dimension" />
+    <declare-styleable name="CircleProgressBar">
+        <attr name="fstColor" />
+        <attr name="sedColor" />
+        <attr name="stroke" />
+        <attr name="speed" />
+        <attr name="showProgressValue" />
+        <attr name="progressTextColor" />
+        <attr name="progressTextSize" />
+    </declare-styleable>
+    <!--end-->
+
+    <!--GifView attrs-->
     <declare-styleable name="GifView">
         <attr name="gif" format="reference" />
         <attr name="paused" format="boolean" />
     </declare-styleable>
+    <!--end-->
+
 </resources>
