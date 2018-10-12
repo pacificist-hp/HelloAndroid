@@ -1,2 +1,2 @@
 # HelloAndroid
-some debug code of Android
+some debug code of Custom Views
