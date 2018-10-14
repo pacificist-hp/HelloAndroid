@@ -6,4 +6,12 @@
     <com.android.pacificist.helloandroid.cardview.CardView
         android:layout_width="match_parent"
         android:layout_height="613px" />
+
+    <com.android.pacificist.helloandroid.barrageview.BarrageView
+        android:id="@+id/barrage_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent">
+    </com.android.pacificist.helloandroid.barrageview.BarrageView>
+
 </FrameLayout>

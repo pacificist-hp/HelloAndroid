@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">HelloAndroid</string>
+
+    <string name="apply_for_landlord">叫地主</string>
+    <string name="rob_landlord">抢地主</string>
+    <string name="double_three">对3</string>
+    <string name="have_bigger_card">管上</string>
+    <string name="bomb">炸！</string>
+    <string name="have_no_bigger_card">要不起</string>
 </resources>
