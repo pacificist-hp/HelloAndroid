@@ -26,7 +26,7 @@ public class GifViewItem extends CustomViewItem<GifViewItem.GifViewHolder> {
     }
 
     @Override
-    public void bindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void bindViewHolder(GifViewHolder holder, int position) {
 
     }
 

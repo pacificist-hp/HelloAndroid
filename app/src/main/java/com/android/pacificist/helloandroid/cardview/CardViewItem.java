@@ -27,7 +27,7 @@ public class CardViewItem extends CustomViewItem<CardViewItem.CardViewHolder> {
     }
 
     @Override
-    public void bindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void bindViewHolder(CardViewHolder holder, int position) {
 
     }
 

@@ -26,7 +26,7 @@ public class CircleProgressBarItem extends CustomViewItem<CircleProgressBarItem.
     }
 
     @Override
-    public void bindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void bindViewHolder(CircleProgressBarHolder holder, int position) {
 
     }
 

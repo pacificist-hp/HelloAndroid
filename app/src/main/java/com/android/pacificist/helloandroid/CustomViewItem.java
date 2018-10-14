@@ -8,7 +8,7 @@ import android.view.ViewGroup;
  * Created by pacificist on 2018/10/11.
  */
 public abstract class CustomViewItem<VH extends RecyclerView.ViewHolder>
-        implements ICustomViewItem {
+        implements ICustomViewItem<VH> {
     @Override
     public int getLayoutRes() {
         return 0;
@@ -20,7 +20,7 @@ public abstract class CustomViewItem<VH extends RecyclerView.ViewHolder>
     }
 
     @Override
-    public void bindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void bindViewHolder(VH holder, int position) {
         throw new IllegalStateException(this.getClass().getSimpleName() + " do not overwrite bindViewHolder");
     }
 }
