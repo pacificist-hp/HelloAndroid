@@ -111,6 +111,9 @@ public class CircleProgressBar extends View {
         });
     }
 
+    public void setSpeed(int speed) {
+        mSpeed = speed;
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {

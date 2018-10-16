@@ -7,4 +7,6 @@
     <string name="have_bigger_card">管上</string>
     <string name="bomb">炸！</string>
     <string name="have_no_bigger_card">要不起</string>
+
+    <string name="perfix_circle_speed">转一圈 %.1f 秒</string>
 </resources>
