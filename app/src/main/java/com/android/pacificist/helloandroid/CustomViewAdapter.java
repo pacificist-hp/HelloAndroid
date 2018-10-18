@@ -25,9 +25,13 @@ public class CustomViewAdapter<T extends ICustomViewItem> extends RecyclerView.A
 
     @Override
     public int getItemViewType(int position) {
+        // ViewType is used for the reuse of ViewHolders.
+        // Two items with the same viewType will have the same ViewHolder
+        // and will share one ViewHolder object if needed.
         T item = mItems.get(position);
         if (item != null && !mViewTypes.containsKey(item.getLayoutRes())) {
-            // all items which have the same layout should have the same onCreateViewHolder and onBindViewHolder
+            // ViewHolder is a Collection of views.
+            // All items with a same layout should have a same ViewHolder.
             mViewTypes.put(item.getLayoutRes(), item);
         }
         return item.getLayoutRes();
@@ -35,6 +39,7 @@ public class CustomViewAdapter<T extends ICustomViewItem> extends RecyclerView.A
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // ViewHolders can be created in different ways from different ViewTypes.
         T item = mViewTypes.get(viewType);
         if (item == null) {
             throw new IllegalStateException("Do not find view by type: " + viewType);
@@ -47,6 +52,7 @@ public class CustomViewAdapter<T extends ICustomViewItem> extends RecyclerView.A
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        // Because holder may be reused, we must reset all the views in holder from item's data.
         mItems.get(position).bindViewHolder(holder, position);
     }
 
