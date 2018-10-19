@@ -9,4 +9,6 @@
     <string name="have_no_bigger_card">要不起</string>
 
     <string name="perfix_circle_speed">转一圈 %.1f 秒</string>
+
+    <string name="hint_scratch_float">刮开有惊喜</string>
 </resources>

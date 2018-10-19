@@ -11,6 +11,7 @@ import com.android.pacificist.helloandroid.circleprogressbar.CircleProgressBarIt
 import com.android.pacificist.helloandroid.gifview.GifViewItem;
 import com.android.pacificist.helloandroid.rxbus.RxBus;
 import com.android.pacificist.helloandroid.rxbus.RxEvent;
+import com.android.pacificist.helloandroid.scratchcard.ScratchCardItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<CustomViewItem> getCustomViewItems() {
         List<CustomViewItem> items = new ArrayList<>();
+        items.add(new ScratchCardItem());
         items.add(new CircleProgressBarItem());
         items.add(new GifViewItem());
         items.add(new CardViewItem());
