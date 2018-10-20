@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.android.pacificist.helloandroid.gifview.GifView
+    <com.android.pacificist.helloandroid.view.GifView
         android:id="@+id/gif"
         android:layout_width="wrap_content"
         android:layout_height="220px"

@@ -1,17 +1,18 @@
 package com.android.pacificist.helloandroid;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.android.pacificist.helloandroid.cardview.CardViewItem;
-import com.android.pacificist.helloandroid.circleprogressbar.CircleProgressBarItem;
-import com.android.pacificist.helloandroid.gifview.GifViewItem;
-import com.android.pacificist.helloandroid.rxbus.RxBus;
-import com.android.pacificist.helloandroid.rxbus.RxEvent;
-import com.android.pacificist.helloandroid.scratchcard.ScratchCardItem;
+import com.android.pacificist.helloandroid.floor.CustomViewLayoutManager;
+import com.android.pacificist.helloandroid.viewitem.CardViewItem;
+import com.android.pacificist.helloandroid.viewitem.CircleProgressBarItem;
+import com.android.pacificist.helloandroid.viewitem.GifViewItem;
+import com.android.pacificist.helloandroid.bus.CustomViewBus;
+import com.android.pacificist.helloandroid.bus.CustomViewEvent;
+import com.android.pacificist.helloandroid.viewitem.ScratchCardItem;
+import com.android.pacificist.helloandroid.floor.CustomViewAdapter;
+import com.android.pacificist.helloandroid.floor.CustomViewItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,28 +52,28 @@ public class CustomViewActivity extends AppCompatActivity {
     }
 
     private void registerEvent() {
-        mCompositeDisposable.add(RxBus.get().toObservable().map(new Function<Object, RxEvent>() {
+        mCompositeDisposable.add(CustomViewBus.get().toObservable().map(new Function<Object, CustomViewEvent>() {
             @Override
-            public RxEvent apply(Object o) {
-                return (RxEvent) o;
+            public CustomViewEvent apply(Object o) {
+                return (CustomViewEvent) o;
             }
-        }).subscribe(new Consumer<RxEvent>() {
+        }).subscribe(new Consumer<CustomViewEvent>() {
             @Override
-            public void accept(RxEvent rxEvent) {
-                handleEvent(rxEvent);
+            public void accept(CustomViewEvent customViewEvent) {
+                handleEvent(customViewEvent);
             }
         }));
     }
 
-    private void handleEvent(RxEvent event) {
+    private void handleEvent(CustomViewEvent event) {
         if (event == null) {
             return;
         }
         switch (event.key) {
-            case RxEvent.KEY_ENABLE_SCROLL:
+            case CustomViewEvent.KEY_ENABLE_SCROLL:
                 mLayoutManager.setScrollable(true);
                 break;
-            case RxEvent.KEY_DISABLE_SCROLL:
+            case CustomViewEvent.KEY_DISABLE_SCROLL:
                 mLayoutManager.setScrollable(false);
                 break;
             default:
@@ -106,23 +107,5 @@ public class CustomViewActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mCompositeDisposable.dispose();
-    }
-
-    private class CustomViewLayoutManager extends LinearLayoutManager {
-
-        private boolean isScrollable = true;
-
-        public CustomViewLayoutManager(Context context) {
-            super(context);
-        }
-
-        public void setScrollable(boolean scrollable) {
-            isScrollable = scrollable;
-        }
-
-        @Override
-        public boolean canScrollVertically() {
-            return isScrollable && super.canScrollVertically();
-        }
     }
 }

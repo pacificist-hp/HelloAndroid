@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid.barrageview;
+package com.android.pacificist.helloandroid.view;
 
 import android.animation.Animator;
 import android.content.Context;

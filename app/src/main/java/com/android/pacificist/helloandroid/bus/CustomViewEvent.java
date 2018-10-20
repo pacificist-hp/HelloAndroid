@@ -1,14 +1,14 @@
-package com.android.pacificist.helloandroid.rxbus;
+package com.android.pacificist.helloandroid.bus;
 
 /**
  * Created by pacificist on 2018/10/20.
  */
-public class RxEvent {
+public class CustomViewEvent {
 
     public static final String KEY_DISABLE_SCROLL = "disable_scroll";
     public static final String KEY_ENABLE_SCROLL = "enable_scroll";
 
-    public RxEvent(String key, Object value) {
+    public CustomViewEvent(String key, Object value) {
         this.key = key;
         this.value = value;
     }

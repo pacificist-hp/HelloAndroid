@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid;
+package com.android.pacificist.helloandroid.floor;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

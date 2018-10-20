@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid.scratchcard;
+package com.android.pacificist.helloandroid.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,8 +14,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.android.pacificist.helloandroid.R;
-import com.android.pacificist.helloandroid.rxbus.RxBus;
-import com.android.pacificist.helloandroid.rxbus.RxEvent;
+import com.android.pacificist.helloandroid.bus.CustomViewBus;
+import com.android.pacificist.helloandroid.bus.CustomViewEvent;
 
 /**
  * Created by pacificist on 2018/10/18.
@@ -85,16 +85,16 @@ public class ScratchCard extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mPath.moveTo(event.getX(), event.getY());
-                RxBus.get().post(new RxEvent(RxEvent.KEY_DISABLE_SCROLL, null));
+                CustomViewBus.get().post(new CustomViewEvent(CustomViewEvent.KEY_DISABLE_SCROLL, null));
                 break;
             case MotionEvent.ACTION_MOVE:
                 mPath.lineTo(event.getX(), event.getY());
                 break;
             case MotionEvent.ACTION_UP:
-                RxBus.get().post(new RxEvent(RxEvent.KEY_ENABLE_SCROLL, null));
+                CustomViewBus.get().post(new CustomViewEvent(CustomViewEvent.KEY_ENABLE_SCROLL, null));
                 break;
             case MotionEvent.ACTION_CANCEL:
-                RxBus.get().post(new RxEvent(RxEvent.KEY_ENABLE_SCROLL, null));
+                CustomViewBus.get().post(new CustomViewEvent(CustomViewEvent.KEY_ENABLE_SCROLL, null));
                 break;
             default:
                 break;

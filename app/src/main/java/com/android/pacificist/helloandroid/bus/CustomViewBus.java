@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid.rxbus;
+package com.android.pacificist.helloandroid.bus;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -7,15 +7,15 @@ import io.reactivex.subjects.Subject;
 /**
  * Created by pacificist on 2018/10/19.
  */
-public class RxBus {
+public class CustomViewBus {
 
     private final Subject<Object> mBus;
 
-    private RxBus() {
+    private CustomViewBus() {
         mBus = PublishSubject.create().toSerialized();
     }
 
-    public static RxBus get() {
+    public static CustomViewBus get() {
         return RxBusInstance.instance;
     }
 
@@ -36,6 +36,6 @@ public class RxBus {
     }
 
     private static class RxBusInstance {
-        private static final RxBus instance = new RxBus();
+        private static final CustomViewBus instance = new CustomViewBus();
     }
 }

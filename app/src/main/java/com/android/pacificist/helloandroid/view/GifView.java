@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid.gifview;
+package com.android.pacificist.helloandroid.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;

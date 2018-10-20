@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.android.pacificist.helloandroid.circleprogressbar.CircleProgressBar
+    <com.android.pacificist.helloandroid.view.CircleProgressBar
         android:id="@+id/circle_progress_bar"
         android:layout_width="200dp"
         android:layout_height="200dp"
@@ -16,7 +16,7 @@
         bar:progressTextColor="@android:color/holo_red_dark"
         bar:speed="10" />
 
-    <com.android.pacificist.helloandroid.horizontalflow.HorizontalFlow
+    <com.android.pacificist.helloandroid.view.HorizontalFlow
         android:id="@+id/horizontal_flow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

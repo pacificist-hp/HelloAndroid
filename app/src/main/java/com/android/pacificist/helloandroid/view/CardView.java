@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid.cardview;
+package com.android.pacificist.helloandroid.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;

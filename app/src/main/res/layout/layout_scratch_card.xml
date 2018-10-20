@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:paddingTop="10dp"
     android:paddingBottom="10dp">
-    <com.android.pacificist.helloandroid.scratchcard.ScratchCard
+    <com.android.pacificist.helloandroid.view.ScratchCard
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@mipmap/underworld_girl"/>

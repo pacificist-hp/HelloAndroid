@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid.cardview;
+package com.android.pacificist.helloandroid.viewitem;
 
 import android.graphics.Color;
 import android.os.Handler;
@@ -9,9 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.pacificist.helloandroid.CustomViewItem;
+import com.android.pacificist.helloandroid.floor.CustomViewItem;
 import com.android.pacificist.helloandroid.R;
-import com.android.pacificist.helloandroid.barrageview.BarrageView;
+import com.android.pacificist.helloandroid.view.BarrageView;
 
 /**
  * Created by pacificist on 2018/10/12.
