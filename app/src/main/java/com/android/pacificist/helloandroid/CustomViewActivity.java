@@ -16,11 +16,16 @@ import com.android.pacificist.helloandroid.scratchcard.ScratchCardItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class CustomViewActivity extends AppCompatActivity {
 
     private RecyclerView mCustomViews;
     private CustomViewLayoutManager mLayoutManager;
@@ -36,20 +41,13 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new CustomViewLayoutManager(this);
 
         mCompositeDisposable = new CompositeDisposable();
-        registerEvent();
 
         mCustomViews.setLayoutManager(mLayoutManager);
-        mAdapter = new CustomViewAdapter<>(getCustomViewItems());
+        mAdapter = new CustomViewAdapter<CustomViewItem>(null);
         mCustomViews.setAdapter(mAdapter);
-    }
 
-    private List<CustomViewItem> getCustomViewItems() {
-        List<CustomViewItem> items = new ArrayList<>();
-        items.add(new ScratchCardItem());
-        items.add(new CircleProgressBarItem());
-        items.add(new GifViewItem());
-        items.add(new CardViewItem());
-        return items;
+        registerEvent();
+        asyncLoadCustomViews();
     }
 
     private void registerEvent() {
@@ -80,6 +78,28 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    private void asyncLoadCustomViews() {
+        mCompositeDisposable.add(Observable.create(new ObservableOnSubscribe<List<CustomViewItem>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<CustomViewItem>> emitter) {
+                List<CustomViewItem> items = new ArrayList<>();
+                items.add(new ScratchCardItem());
+                items.add(new CircleProgressBarItem());
+                items.add(new GifViewItem());
+                items.add(new CardViewItem());
+                emitter.onNext(items);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<CustomViewItem>>() {
+                    @Override
+                    public void accept(List<CustomViewItem> customViewItems) {
+                        mAdapter.addItems(customViewItems);
+                    }
+                }));
     }
 
     @Override

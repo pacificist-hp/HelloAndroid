@@ -71,4 +71,9 @@ public class CustomViewAdapter<T extends ICustomViewItem> extends RecyclerView.A
         mItems.remove(index);
         notifyItemRemoved(index);
     }
+
+    public void addItems(List<T> items) {
+        mItems.addAll(items);
+        notifyDataSetChanged();
+    }
 }
