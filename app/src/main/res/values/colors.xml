@@ -8,4 +8,6 @@
     <color name="color_horizontal_item_bg_selected">#DF2211</color>
     <color name="color_horizontal_item_text_default">#666666</color>
     <color name="color_horizontal_item_text_selected">#DF2211</color>
+
+    <color name="color_ripple">#EC8E08</color>
 </resources>

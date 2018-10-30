@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="ripple_duration_time">2000</integer>
+    <integer name="ripple_scale">5</integer>
+    <string name="ripple_style">fill</string>
+</resources>

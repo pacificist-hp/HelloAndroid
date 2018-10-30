@@ -10,6 +10,7 @@ import com.android.pacificist.helloandroid.viewitem.CircleProgressBarItem;
 import com.android.pacificist.helloandroid.viewitem.GifViewItem;
 import com.android.pacificist.helloandroid.bus.CustomViewBus;
 import com.android.pacificist.helloandroid.bus.CustomViewEvent;
+import com.android.pacificist.helloandroid.viewitem.RippleViewItem;
 import com.android.pacificist.helloandroid.viewitem.ScratchCardItem;
 import com.android.pacificist.helloandroid.floor.CustomViewAdapter;
 import com.android.pacificist.helloandroid.floor.CustomViewItem;
@@ -86,6 +87,7 @@ public class CustomViewActivity extends AppCompatActivity {
             @Override
             public void subscribe(ObservableEmitter<List<CustomViewItem>> emitter) {
                 List<CustomViewItem> items = new ArrayList<>();
+                items.add(new RippleViewItem());
                 items.add(new ScratchCardItem());
                 items.add(new CircleProgressBarItem());
                 items.add(new GifViewItem());
