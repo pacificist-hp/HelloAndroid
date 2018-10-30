@@ -12,6 +12,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.android.pacificist.helloandroid.R;
+import com.android.pacificist.helloandroid.util.Util;
 
 /**
  * Created by pacificist on 2018/10/12.
@@ -20,13 +21,11 @@ public class CircleProgressBar extends View {
 
     private int mFstColor = Color.GREEN;
     private int mSedColor = Color.RED;
-    private int mStroke = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-            15, getResources().getDisplayMetrics());
+    private int mStroke = Util.dp2px(15, getResources());
     private int mSpeed = 20;
     private boolean mShowProgressValue = true;
     private int mProgressTextColor = Color.BLACK;
-    private int mProgressTextSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-            20, getResources().getDisplayMetrics());
+    private int mProgressTextSize = Util.dp2px(20, getResources());
 
     private int mCurrentProgress = 0;
     private boolean mIsNext = false;

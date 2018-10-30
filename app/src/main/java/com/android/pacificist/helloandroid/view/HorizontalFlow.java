@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.pacificist.helloandroid.R;
+import com.android.pacificist.helloandroid.util.Util;
 
 import java.util.List;
 
@@ -60,12 +61,15 @@ public class HorizontalFlow extends HorizontalScrollView {
 
             ViewGroup.LayoutParams params = view.getLayoutParams();
             if (params == null) {
-                params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp2px(30));
+                params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                        Util.dp2px(30, getResources()));
             }
             if (i == 0) {
-                ((MarginLayoutParams) params).setMargins(dp2px(10), 0, dp2px(10), 0);
+                ((MarginLayoutParams) params).setMargins(Util.dp2px(10, getResources()),
+                        0, Util.dp2px(10, getResources()), 0);
             } else {
-                ((MarginLayoutParams) params).setMargins(0, 0, dp2px(10), 0);
+                ((MarginLayoutParams) params).setMargins(0,
+                        0, Util.dp2px(10, getResources()), 0);
             }
             view.setLayoutParams(params);
 
@@ -128,11 +132,6 @@ public class HorizontalFlow extends HorizontalScrollView {
         if (mSelectedView != null) {
             showFullItemView(mSelectedView);
         }
-    }
-
-    private int dp2px(float dp) {
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
 
     public interface OnItemClickListener {

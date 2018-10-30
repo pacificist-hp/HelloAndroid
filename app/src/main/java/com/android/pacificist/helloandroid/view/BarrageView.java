@@ -11,6 +11,8 @@ import android.view.animation.LinearInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.pacificist.helloandroid.util.Util;
+
 import java.util.Random;
 
 /**
@@ -45,8 +47,7 @@ public class BarrageView extends RelativeLayout {
     }
 
     private void init() {
-        mItemMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                20, getResources().getDisplayMetrics());
+        mItemMargin = Util.dp2px(20, getResources());
         mLastViewsInRow = new View[mRowNum];
     }
 
@@ -79,8 +80,7 @@ public class BarrageView extends RelativeLayout {
     private View newBarrageItem(String text, int textSize, int textColor) {
         final TextView item = new TextView(getContext());
         item.setText(text);
-        item.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                textSize, getResources().getDisplayMetrics()));
+        item.setTextSize(Util.dp2px(textSize, getResources()));
         item.setTextColor(textColor);
 
         int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
