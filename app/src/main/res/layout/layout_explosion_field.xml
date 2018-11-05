@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:paddingBottom="220dp">
+
+        <ImageView
+            android:id="@+id/explosion_calculator"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/icon_calculator"/>
+        <ImageView
+            android:id="@+id/explosion_email"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginLeft="20dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/icon_email"/>
+        <TextView
+            android:id="@+id/explosion_text"
+            android:layout_width="120dp"
+            android:layout_height="72dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:background="@android:color/holo_green_light"
+            android:text="@string/bomb"
+            android:textStyle="bold"
+            android:textSize="30sp"/>
+    </LinearLayout>
+
+    <com.android.pacificist.helloandroid.view.ExplosionField
+        android:id="@+id/explosion_field"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

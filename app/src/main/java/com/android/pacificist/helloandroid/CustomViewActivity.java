@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import com.android.pacificist.helloandroid.floor.CustomViewLayoutManager;
 import com.android.pacificist.helloandroid.viewitem.CardViewItem;
 import com.android.pacificist.helloandroid.viewitem.CircleProgressBarItem;
+import com.android.pacificist.helloandroid.viewitem.ExplosionItem;
 import com.android.pacificist.helloandroid.viewitem.GifViewItem;
 import com.android.pacificist.helloandroid.bus.CustomViewBus;
 import com.android.pacificist.helloandroid.bus.CustomViewEvent;
@@ -88,6 +89,7 @@ public class CustomViewActivity extends AppCompatActivity {
             public void subscribe(ObservableEmitter<List<CustomViewItem>> emitter) {
                 List<CustomViewItem> items = new ArrayList<>();
                 items.add(new RippleViewItem());
+                items.add(new ExplosionItem());
                 items.add(new ScratchCardItem());
                 items.add(new CircleProgressBarItem());
                 items.add(new GifViewItem());
