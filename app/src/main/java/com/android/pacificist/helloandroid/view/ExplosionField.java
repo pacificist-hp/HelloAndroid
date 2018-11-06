@@ -53,6 +53,7 @@ public class ExplosionField extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        // canvas is relative to the view
         super.onDraw(canvas);
         for (ExplosionAnimator explosionAnimator : mExplosionAnimators) {
             explosionAnimator.draw(canvas);
@@ -61,10 +62,10 @@ public class ExplosionField extends View {
 
     public void explode(final View view) {
         Rect rect = new Rect();
-        view.getGlobalVisibleRect(rect);
+        view.getGlobalVisibleRect(rect);  // rect is relative to the screen now
         int[] location = new int[2];
         view.getLocationOnScreen(location);
-        rect.offset(0, -location[1]);
+        rect.offset(0, -location[1]); // rect is relative to the view now
 
         final ExplosionAnimator animator = new ExplosionAnimator(this, createBitmapFromView(view), rect);
         mExplosionAnimators.add(animator);
@@ -130,6 +131,7 @@ public class ExplosionField extends View {
                     p.advance((Float) getAnimatedValue());
                     mPaint.setColor(p.color);
                     mPaint.setAlpha((int) (Color.alpha(p.color) * p.alpha));
+                    // p.cx and p.cy are relative to canvas now
                     canvas.drawCircle(p.cx, p.cy, p.radius, mPaint);
                 }
             }
