@@ -5,11 +5,13 @@ import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
@@ -24,15 +26,21 @@ public class RxJavaUtil {
     private static final String TAG = "RxJavaUtil";
 
     public static void work() {
-        add(loadDataFromCacheAndNet("config")
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        Log.d(TAG, "load config" + ": " + s);
-                    }
-                }));
-        reduceDemo();
+        postDelayedInMainThread(new Action0() {
+            @Override
+            public void call() {
+                Log.d(TAG, "work");
+                add(loadDataFromCacheAndNet("config")
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Action1<String>() {
+                            @Override
+                            public void call(String s) {
+                                Log.d(TAG, "load config" + ": " + s);
+                            }
+                        }));
+                reduceDemo();
+            }
+        }, 1000, TimeUnit.MILLISECONDS);
     }
 
     private static void reduceDemo() {
@@ -65,6 +73,12 @@ public class RxJavaUtil {
                         Log.d(TAG, integer.toString());
                     }
                 });
+    }
+
+    public static void postDelayedInMainThread(Action0 action0, long delayTime, TimeUnit unit) {
+        Log.d(TAG, "post delay message");
+        // The Subscription object which schedule method returns need not unsubscribe.
+        AndroidSchedulers.mainThread().createWorker().schedule(action0, delayTime, unit);
     }
 
     private static Map<String, String> sCache = new HashMap<>();
