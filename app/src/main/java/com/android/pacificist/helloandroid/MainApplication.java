@@ -2,6 +2,7 @@ package com.android.pacificist.helloandroid;
 
 import android.app.Application;
 
+import com.android.pacificist.helloandroid.matrix.MatrixManager;
 import com.android.pacificist.memoryobserver.MemoryObserver;
 
 /**
@@ -13,5 +14,6 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         MemoryObserver.init(this);
+        MatrixManager.init(this);
     }
 }
