@@ -1,4 +1,4 @@
-package com.android.pacificist.memoryobserver;
+package com.android.pacificist.memory;
 
 import android.content.Context;
 import android.graphics.Canvas;

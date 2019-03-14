@@ -1,4 +1,4 @@
-package com.android.pacificist.memoryobserver;
+package com.android.pacificist.memory;
 
 import java.util.HashMap;
 import java.util.Map;

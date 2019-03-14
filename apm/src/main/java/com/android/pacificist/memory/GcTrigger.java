@@ -1,4 +1,4 @@
-package com.android.pacificist.memoryobserver;
+package com.android.pacificist.memory;
 
 /**
  * copied from LeakCanary on 2018/7/22.

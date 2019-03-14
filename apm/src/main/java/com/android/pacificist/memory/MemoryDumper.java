@@ -1,4 +1,4 @@
-package com.android.pacificist.memoryobserver;
+package com.android.pacificist.memory;
 
 import android.annotation.SuppressLint;
 import android.os.Debug;

@@ -1,1 +1,1 @@
-include ':app', ':memoryobserver'
+include ':app', ':apm'
