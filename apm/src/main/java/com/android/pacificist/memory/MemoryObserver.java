@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.android.pacificist.thread.ThreadDumper;
+
 /**
  * Created by pacificist on 2018/7/8.
  */

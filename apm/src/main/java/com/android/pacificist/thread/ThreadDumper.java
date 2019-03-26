@@ -1,4 +1,4 @@
-package com.android.pacificist.memory;
+package com.android.pacificist.thread;
 
 import java.util.HashMap;
 import java.util.Map;

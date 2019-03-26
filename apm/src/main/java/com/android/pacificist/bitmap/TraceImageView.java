@@ -1,4 +1,4 @@
-package com.android.pacificist.memory;
+package com.android.pacificist.bitmap;
 
 import android.content.Context;
 import android.graphics.Canvas;

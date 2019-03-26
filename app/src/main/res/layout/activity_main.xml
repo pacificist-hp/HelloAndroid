@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.android.pacificist.helloandroid.MainActivity">
 
-    <com.android.pacificist.memory.TraceImageView
+    <com.android.pacificist.bitmap.TraceImageView
         android:id="@+id/trace_image_view"
         android:layout_width="112.75dp"
         android:layout_height="200dp"
