@@ -3,6 +3,7 @@ package com.android.pacificist.helloandroid;
 import android.app.Application;
 
 import com.android.pacificist.helloandroid.matrix.MatrixManager;
+import com.android.pacificist.jam.JamObserver;
 import com.android.pacificist.launch.LaunchObserver;
 import com.android.pacificist.memory.MemoryObserver;
 
@@ -18,5 +19,6 @@ public class MainApplication extends Application {
         MemoryObserver.init(this);
         LaunchObserver.init(this);
         MatrixManager.init(this);
+        JamObserver.get().init(this);
     }
 }
