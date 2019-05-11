@@ -2,6 +2,7 @@ package com.android.pacificist.helloandroid;
 
 import android.app.Application;
 
+import com.android.pacificist.crash.CrashObserver;
 import com.android.pacificist.helloandroid.matrix.MatrixManager;
 import com.android.pacificist.jam.JamObserver;
 import com.android.pacificist.launch.LaunchObserver;
@@ -20,5 +21,6 @@ public class MainApplication extends Application {
         LaunchObserver.init(this);
         MatrixManager.init(this);
         JamObserver.get().init(this);
+        CrashObserver.get().init();
     }
 }
