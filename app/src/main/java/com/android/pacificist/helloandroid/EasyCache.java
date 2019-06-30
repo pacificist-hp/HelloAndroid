@@ -91,6 +91,7 @@ public class EasyCache {
         return cache;
     }
 
+    /* It must run in a non-UI thread */
     private String readDiskCache(String name) {
         String data = DEF_DATA;
 
@@ -133,6 +134,7 @@ public class EasyCache {
         return DEF_HASH;
     }
 
+    /* It must run in a non-UI thread */
     public void saveCache(final String name, final String data) {
         if (TextUtils.isEmpty(name) || TextUtils.isEmpty(data)) {
             return;
