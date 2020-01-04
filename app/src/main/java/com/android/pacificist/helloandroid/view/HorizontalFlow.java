@@ -3,7 +3,6 @@ package com.android.pacificist.helloandroid.view;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ import java.util.List;
  */
 public class HorizontalFlow extends HorizontalScrollView {
 
-    private LinearLayout mContentView;
+    private UrlLinearLayout mContentView;
     private View mSelectedView = null;
 
     private OnItemClickListener mItemClickListener = null;
@@ -43,10 +42,11 @@ public class HorizontalFlow extends HorizontalScrollView {
 
     private void init() {
         setHorizontalScrollBarEnabled(false);
-        mContentView = new LinearLayout(getContext());
+        mContentView = new UrlLinearLayout(getContext());
         mContentView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         mContentView.setOrientation(LinearLayout.HORIZONTAL);
+        mContentView.setBackgroundUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578126263998&di=f2bfc70d7ccc8eed6d9d3778ac928019&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F3e237cc558e41d6496eb26d9b8dacca6730984f1b15f-JuZZbj_fw658");
         addView(mContentView);
     }
 
