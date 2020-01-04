@@ -32,7 +32,7 @@ public class CustomViewActivity extends AppCompatActivity {
 
     private RecyclerView mCustomViews;
     private CustomViewLayoutManager mLayoutManager;
-    private CustomViewAdapter mAdapter;
+    private CustomViewAdapter<CustomViewItem> mAdapter;
 
     private CompositeDisposable mCompositeDisposable;
 
@@ -46,7 +46,7 @@ public class CustomViewActivity extends AppCompatActivity {
         mCompositeDisposable = new CompositeDisposable();
 
         mCustomViews.setLayoutManager(mLayoutManager);
-        mAdapter = new CustomViewAdapter<CustomViewItem>(null);
+        mAdapter = new CustomViewAdapter<>(null);
         mCustomViews.setAdapter(mAdapter);
 
         registerEvent();
