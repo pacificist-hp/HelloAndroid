@@ -72,10 +72,29 @@ public class UrlLinearLayout extends LinearLayout implements Target {
                     new Rect(0, 0, mBitmap.getWidth(), mBitmap.getHeight()),
                     new Rect(0, 0, getWidth(), getHeight()),
                     new Paint());
-            /*
+
+            /* fitXY
             mDrawable.setBounds(0, 0, getWidth(), getHeight());
             mDrawable.draw(canvas);
              */
+
+            /* centerCrop
+            if (mDrawable.getIntrinsicWidth() > 0 && mDrawable.getIntrinsicHeight() > 0) {
+                float scaleX = getWidth() / (float) mDrawable.getIntrinsicWidth();
+                float scaleY = getHeight() / (float) mDrawable.getIntrinsicHeight();
+                if (scaleX > scaleY) {
+                    // drawable 的宽缩放到与 view 相等，高缩放到大于 view 的高
+                    int offsetY = (int) ((mDrawable.getIntrinsicHeight() * scaleX - getHeight()) / 2);
+                    mDrawable.setBounds(0, -offsetY, getWidth(), getHeight() + offsetY);
+                } else {
+                    // drawable 的高缩放到与 view 相等，宽缩放到大于 view 的宽
+                    int offsetX = (int) ((mDrawable.getIntrinsicWidth() * scaleY - getWidth()) / 2);
+                    mDrawable.setBounds(-offsetX, 0, getWidth() + offsetX, getHeight());
+                }
+                mDrawable.draw(canvas);
+            }
+             */
+
         }
 
         super.dispatchDraw(canvas);
