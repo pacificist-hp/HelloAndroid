@@ -3,10 +3,9 @@
 //
 #include <jni.h>
 #include <string>
-#include <android/log.h>
 
-#define LOG_TAG "native_bridge"
-#define LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#include "../include/common.h"
+#include "../include/Dispatcher.h"
 
 extern "C" {
 
@@ -15,6 +14,7 @@ static JavaVM *g_vm;
 static void native_register_function(JNIEnv* env, jobject thiz, jstring jname, jint jparam_num) {
     const char* name = env->GetStringUTFChars(jname, 0);
     LOGD("native_register_function: %s, %d", name, jparam_num);
+    bridge::Dispatcher::register_function(name, jparam_num);
     env->ReleaseStringUTFChars(jname, name);
 }
 
