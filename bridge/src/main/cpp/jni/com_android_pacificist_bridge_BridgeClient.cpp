@@ -26,7 +26,7 @@ static int registerNativeMethods(JNIEnv* env) {
     int result = -1;
 
     /* look up the class */
-    jclass clazz = env->FindClass("com/android/pacificist/bridge/Bridge");
+    jclass clazz = env->FindClass("com/android/pacificist/bridge/BridgeClient");
 
     if (NULL != clazz) {
         if (env->RegisterNatives(clazz, nativeMethods,

@@ -17,7 +17,7 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        jni/com_android_pacificist_bridge_Bridge.cpp
+        jni/com_android_pacificist_bridge_BridgeClient.cpp
         Dispatcher.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a

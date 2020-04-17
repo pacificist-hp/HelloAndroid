@@ -6,14 +6,14 @@ import java.util.Map;
 /**
  * Created by pacificist on 2020/4/16.
  */
-public class Bridge {
-    private static Bridge sInstance;
+public class BridgeClient {
+    private static BridgeClient sInstance;
 
-    private Bridge() { }
+    private BridgeClient() { }
 
-    public static Bridge instance() {
+    public static BridgeClient instance() {
         if (sInstance == null) {
-            sInstance = new Bridge();
+            sInstance = new BridgeClient();
         }
         return sInstance;
     }
