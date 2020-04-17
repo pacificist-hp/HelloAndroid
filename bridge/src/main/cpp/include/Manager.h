@@ -2,16 +2,16 @@
 // Created by Administrator on 2020/4/16.
 //
 
-#ifndef HELLOANDROID_DISPATCHER_H
-#define HELLOANDROID_DISPATCHER_H
+#ifndef HELLOANDROID_MANAGER_H
+#define HELLOANDROID_MANAGER_H
 
 namespace bridge {
 
-    class Dispatcher {
+    class Manager {
     public:
         static void register_function(const char* func_name, int param_num);
     };
 
 }
 
-#endif //HELLOANDROID_DISPATCHER_H
+#endif //HELLOANDROID_MANAGER_H
