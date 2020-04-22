@@ -7,9 +7,13 @@ import java.util.Map;
  * Created by pacificist on 2020/4/16.
  */
 public class BridgeClient {
+
+    public static int VERSION_CODE;
+
     private static BridgeClient sInstance;
 
-    private BridgeClient() { }
+    private BridgeClient() {
+    }
 
     public static BridgeClient instance() {
         if (sInstance == null) {
@@ -29,9 +33,17 @@ public class BridgeClient {
         nativeRegisterFunction(name, paramNum);
     }
 
+    public static Value callFunction(int bridgeId, int evaluatorId, String name, Value[] params) {
+
+        return new Value("javaCallFunction: " + params[0].toString());
+    }
+
+    private static native int nativeInit();
+
     private native void nativeRegisterFunction(String name, int paramNum);
 
     static {
         System.loadLibrary("bridge-lib");
+        VERSION_CODE = nativeInit();
     }
 }

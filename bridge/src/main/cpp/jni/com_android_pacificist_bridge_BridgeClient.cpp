@@ -9,20 +9,138 @@
 
 extern "C" {
 
-static JavaVM *g_vm;
+jclass BRIDGE_CLIENT_CLASS;
+jclass BRIDGE_VALUE_CLASS;
 
-static void native_register_function(JNIEnv* env, jobject thiz, jstring jname, jint jparam_num) {
-    const char* name = env->GetStringUTFChars(jname, 0);
+jmethodID BRIDGE_VALUE_INIT_STRING_METHOD;
+jmethodID BRIDGE_VALUE_INIT_VOID_METHOD;
+
+jmethodID BRIDGE_CLIENT_CALL_FUNCTION_METHOD;
+
+jfieldID BRIDGE_VALUE_TYPE_FIELD;
+jfieldID BRIDGE_VALUE_STRING_FIELD;
+
+/* JavaVM is valid globally */
+static JavaVM *g_vm = NULL;
+
+/* JNIEnv is thread related */
+static JNIEnv *get_env() {
+    JNIEnv *env = NULL;
+    if (NULL != g_vm && g_vm->GetEnv((void **) &env, JNI_VERSION_1_6) == JNI_OK) {
+        return env;
+    }
+
+    return NULL;
+}
+
+jobject convert_to_bridge_value(JNIEnv *env, bridge::bridge_value value) {
+    jobject result = NULL;
+
+    switch (value._type) {
+        case bridge::STRING: {
+            jstring str = env->NewStringUTF(value._string.c_str());
+            result = env->NewObject(BRIDGE_VALUE_CLASS, BRIDGE_VALUE_INIT_STRING_METHOD, str);
+            env->DeleteLocalRef(str);
+            break;
+        }
+        default:
+            result = env->NewObject(BRIDGE_VALUE_CLASS, BRIDGE_VALUE_INIT_VOID_METHOD);
+            break;
+    }
+
+    return result;
+}
+
+bridge::bridge_value
+out_func_def(int bridge_id, int eval_id, const char *name, bridge::bridge_value *params,
+             int param_num) {
+    JNIEnv *env = get_env();
+    if (NULL == env) {
+        return bridge::bridge_value();
+    }
+
+    jobjectArray jparams = NULL;
+    if (param_num > 0) {
+        jparams = (jobjectArray) env->NewObjectArray(param_num, BRIDGE_VALUE_CLASS, NULL);
+
+        for (int i = 0; i < param_num; i++) {
+            env->SetObjectArrayElement(jparams, i, convert_to_bridge_value(env, params[i]));
+        }
+    }
+
+    bridge::bridge_value value;
+
+    jstring jname = env->NewStringUTF(name);
+    jobject jvalue = env->CallStaticObjectMethod(BRIDGE_CLIENT_CLASS,
+                                                 BRIDGE_CLIENT_CALL_FUNCTION_METHOD,
+                                                 bridge_id, eval_id, jname, jparams);
+    if (env->ExceptionCheck()) {
+        env->ExceptionDescribe();
+        env->ExceptionClear();
+
+        return value;
+    }
+
+    if (NULL == jvalue) {
+        return value;
+    }
+
+    jint jtype = env->GetIntField(jvalue, BRIDGE_VALUE_TYPE_FIELD);
+    switch (jtype) {
+        case 2: {
+            value._type = bridge::STRING;
+            jstring jstr = (jstring) env->GetObjectField(jvalue, BRIDGE_VALUE_STRING_FIELD);
+            const char *str = env->GetStringUTFChars(jstr, 0);
+            value._string = str;
+            env->ReleaseStringUTFChars(jstr, str);
+            break;
+        }
+        default:
+            break;
+    }
+
+    env->DeleteLocalRef(jname);
+    env->DeleteLocalRef(jparams);
+    env->DeleteLocalRef(jvalue);
+
+    return value;
+}
+
+static jint native_init(JNIEnv *env, jclass clazz) {
+    LOGD("native_init");
+
+    BRIDGE_CLIENT_CLASS = (jclass) env->NewGlobalRef(
+            env->FindClass("com/android/pacificist/bridge/BridgeClient"));
+    BRIDGE_VALUE_CLASS = (jclass) env->NewGlobalRef(
+            env->FindClass("com/android/pacificist/bridge/Value"));
+
+    BRIDGE_VALUE_INIT_STRING_METHOD = env->GetMethodID(BRIDGE_VALUE_CLASS, "<init>",
+                                                       "(Ljava/lang/String;)V");
+    BRIDGE_VALUE_INIT_VOID_METHOD = env->GetMethodID(BRIDGE_VALUE_CLASS, "<init>", "()V");
+
+    BRIDGE_CLIENT_CALL_FUNCTION_METHOD = env->GetStaticMethodID(BRIDGE_CLIENT_CLASS, "callFunction",
+                                                                "(IILjava/lang/String;[Lcom/android/pacificist/bridge/Value;)Lcom/android/pacificist/bridge/Value;");
+
+    BRIDGE_VALUE_TYPE_FIELD = env->GetFieldID(BRIDGE_VALUE_CLASS, "type", "I");
+    BRIDGE_VALUE_STRING_FIELD = env->GetFieldID(BRIDGE_VALUE_CLASS, "stringVal",
+                                                "Ljava/lang/String;");
+
+    return BRIDGE_VERSION_CODE;
+}
+
+static void native_register_function(JNIEnv *env, jobject thiz, jstring jname, jint jparam_num) {
+    const char *name = env->GetStringUTFChars(jname, 0);
     LOGD("native_register_function: %s, %d", name, jparam_num);
-    bridge::Manager::register_function(name, jparam_num);
+    bridge::Manager::register_function(name, jparam_num, out_func_def);
     env->ReleaseStringUTFChars(jname, name);
 }
 
 static const JNINativeMethod nativeMethods[] = {
+        {"nativeInit",             "()I",                    (jint *) native_init},
         {"nativeRegisterFunction", "(Ljava/lang/String;I)V", (void *) native_register_function}
 };
 
-static int registerNativeMethods(JNIEnv* env) {
+static int registerNativeMethods(JNIEnv *env) {
     int result = -1;
 
     /* look up the class */
@@ -30,7 +148,7 @@ static int registerNativeMethods(JNIEnv* env) {
 
     if (NULL != clazz) {
         if (env->RegisterNatives(clazz, nativeMethods,
-                sizeof(nativeMethods) / sizeof(nativeMethods[0])) == JNI_OK) {
+                                 sizeof(nativeMethods) / sizeof(nativeMethods[0])) == JNI_OK) {
             result = 0;
         }
     }
@@ -38,15 +156,12 @@ static int registerNativeMethods(JNIEnv* env) {
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void * /* reserved */) {
-    g_vm = vm;
-
-    JNIEnv *env = NULL;
     jint result = -1;
 
-    if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) == JNI_OK) {
-        if (NULL != env && registerNativeMethods(env) == 0) {
-            result = JNI_VERSION_1_6;
-        }
+    g_vm = vm;
+    JNIEnv *env = get_env();
+    if (NULL != env && registerNativeMethods(env) == 0) {
+        result = JNI_VERSION_1_6;
     }
 
     return result;

@@ -11,8 +11,22 @@ public class Value {
     public int type;
     public String stringVal;
 
+    public Value() {
+        type = TYPE_NONE;
+    }
+
     public Value(String val) {
         type = TYPE_STRING;
         stringVal = val;
+    }
+
+    @Override
+    public String toString() {
+        switch (type) {
+            case TYPE_STRING:
+                return stringVal;
+            default:
+                return "null";
+        }
     }
 }
