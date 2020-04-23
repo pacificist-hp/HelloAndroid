@@ -60,6 +60,8 @@ namespace bridge {
 
     typedef bridge_value (*BRIDGE_FUNC_BODY)(int bridge_id, int eval_id, const char *name,
                                              bridge_value *params, int param_num);
+
+    typedef shared_ptr<string> string_ptr;
 }
 
 #endif //HELLOANDROID_COMMON_H

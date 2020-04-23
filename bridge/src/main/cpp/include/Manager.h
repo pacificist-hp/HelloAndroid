@@ -12,7 +12,7 @@ namespace bridge {
     class Manager {
     public:
         static void
-        register_function(const char *func_name, int param_num, BRIDGE_FUNC_BODY out_func_body);
+        register_function(const char *func_name, int param_num, BRIDGE_FUNC_BODY out_func);
     };
 
 }
