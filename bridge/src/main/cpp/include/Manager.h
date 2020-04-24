@@ -13,6 +13,10 @@ namespace bridge {
     public:
         static void
         register_function(const char *func_name, int param_num, BRIDGE_FUNC_BODY out_func);
+
+        static int load_code(const char *code) throw(bridge_exception);
+
+        static void release(int bridge_id);
     };
 
 }

@@ -15,7 +15,7 @@ jclass BRIDGE_VALUE_CLASS;
 jmethodID BRIDGE_VALUE_INIT_STRING_METHOD;
 jmethodID BRIDGE_VALUE_INIT_VOID_METHOD;
 
-jmethodID BRIDGE_CLIENT_CALL_FUNCTION_METHOD;
+jmethodID BRIDGE_CLIENT_CALLBACK_METHOD;
 
 jfieldID BRIDGE_VALUE_TYPE_FIELD;
 jfieldID BRIDGE_VALUE_STRING_FIELD;
@@ -72,8 +72,8 @@ out_func_def(int bridge_id, int eval_id, const char *name, bridge::bridge_value 
 
     jstring jname = env->NewStringUTF(name);
     jobject jvalue = env->CallStaticObjectMethod(BRIDGE_CLIENT_CLASS,
-                                                 BRIDGE_CLIENT_CALL_FUNCTION_METHOD,
-                                                 bridge_id, eval_id, jname, jparams);
+                                                 BRIDGE_CLIENT_CALLBACK_METHOD,
+                                                 jname, jparams);
     if (env->ExceptionCheck()) {
         env->ExceptionDescribe();
         env->ExceptionClear();
@@ -118,8 +118,8 @@ static jint native_init(JNIEnv *env, jclass clazz) {
                                                        "(Ljava/lang/String;)V");
     BRIDGE_VALUE_INIT_VOID_METHOD = env->GetMethodID(BRIDGE_VALUE_CLASS, "<init>", "()V");
 
-    BRIDGE_CLIENT_CALL_FUNCTION_METHOD = env->GetStaticMethodID(BRIDGE_CLIENT_CLASS, "callFunction",
-                                                                "(IILjava/lang/String;[Lcom/android/pacificist/bridge/Value;)Lcom/android/pacificist/bridge/Value;");
+    BRIDGE_CLIENT_CALLBACK_METHOD = env->GetStaticMethodID(BRIDGE_CLIENT_CLASS, "callback",
+                                                           "(Ljava/lang/String;[Lcom/android/pacificist/bridge/Value;)Lcom/android/pacificist/bridge/Value;");
 
     BRIDGE_VALUE_TYPE_FIELD = env->GetFieldID(BRIDGE_VALUE_CLASS, "type", "I");
     BRIDGE_VALUE_STRING_FIELD = env->GetFieldID(BRIDGE_VALUE_CLASS, "stringVal",
@@ -135,9 +135,44 @@ static void native_register_function(JNIEnv *env, jobject thiz, jstring jname, j
     env->ReleaseStringUTFChars(jname, name);
 }
 
+static jint native_load_code(JNIEnv *env, jobject thiz, jstring jcode) {
+    LOGD("native_load_code");
+    const char *code = env->GetStringUTFChars(jcode, 0);
+
+    int id = -1;
+    try {
+        id = bridge::Manager::load_code(code);
+    } catch (bridge::bridge_exception &e) {
+        LOGD("exception in native_load_code: %s", e._msg.c_str());
+        jclass clazz = env->FindClass("java/lang/Exception");
+        env->ThrowNew(clazz, e._msg.c_str());
+    }
+
+    env->ReleaseStringUTFChars(jcode, code);
+
+    return id;
+}
+
+static jobject
+native_invoke(JNIEnv *env, jobject thiz, jint jbridge_id, jstring jname, jobject jargs) {
+    const char *name = env->GetStringUTFChars(jname, 0);
+    LOGD("native_invoke: %s", name);
+
+    return NULL;
+}
+
+static void native_release(JNIEnv *env, jobject thiz, jint jbridge_id) {
+    LOGD("native_release: %d", jbridge_id);
+    bridge::Manager::release(jbridge_id);
+}
+
 static const JNINativeMethod nativeMethods[] = {
-        {"nativeInit",             "()I",                    (jint *) native_init},
-        {"nativeRegisterFunction", "(Ljava/lang/String;I)V", (void *) native_register_function}
+        {"nativeInit",             "()I",                                                       (jint *) native_init},
+        {"nativeRegisterFunction", "(Ljava/lang/String;I)V",                                    (void *) native_register_function},
+        {"nativeLoadCode",         "(Ljava/lang/String;)I",                                     (jint *) native_load_code},
+        {"nativeInvoke",           "(ILjava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;", (jobject *) native_invoke},
+        {"nativeRelease",          "(I)V",                                                      (void *) native_release}
+
 };
 
 static int registerNativeMethods(JNIEnv *env) {

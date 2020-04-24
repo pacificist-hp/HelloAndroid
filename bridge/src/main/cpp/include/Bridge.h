@@ -19,8 +19,6 @@ namespace bridge {
 
         int load_code(const char *code) throw(bridge_exception);
 
-        int load_file(const char *file) throw(bridge_exception);
-
         static void
         register_function(const char *func_name, int param_num, BRIDGE_FUNC_BODY outer_func);
 

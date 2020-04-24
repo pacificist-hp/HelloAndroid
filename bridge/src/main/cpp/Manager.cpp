@@ -13,4 +13,13 @@ namespace bridge {
         LOGD("Manager::register_function: %s, %d", func_name, param_num);
         bridge::Bridge::register_function(func_name, param_num, out_func);
     }
+
+    int Manager::load_code(const char *code) throw(bridge_exception) {
+        LOGD("Manager::load_code");
+        return 0;
+    }
+
+    void Manager::release(int bridge_id) {
+        LOGD("Manager::release: %d", bridge_id);
+    }
 }
