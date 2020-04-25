@@ -5,8 +5,9 @@
 #ifndef HELLOANDROID_BRIDGE_H
 #define HELLOANDROID_BRIDGE_H
 
-#include "../engine/func.h"
-#include "../engine/lexer.h"
+#include "../engine/Func.h"
+#include "../engine/Lexer.h"
+#include "../engine/Parser.h"
 
 namespace bridge {
 
@@ -27,16 +28,16 @@ namespace bridge {
 
     private:
         static func_def_ptr
-        create_bridge_func(string func_name, vector<string> param_name, ast_tree_ptr body);
+        create_bridge_func(string func_name, vector<string> param_name, AstTreePtr body);
 
     private:
-        int load(bridge_reader_ptr reader);
+        int load(ReaderPtr reader);
 
         void parse() throw(bridge_exception);
 
         void build_to_string_func();
 
-        void build_internal_func(string name, vector<string> vec_param, ast_tree_ptr body);
+        void build_internal_func(string name, vector<string> vec_param, AstTreePtr body);
 
         void reg_func(string func_name, func_def_ptr func_def);
 
@@ -46,6 +47,8 @@ namespace bridge {
 
     private:
         int _id;
+        LexerPtr _lexer;
+        parser_ptr _parser;
     };
 
     typedef shared_ptr<Bridge> BridgePtr;

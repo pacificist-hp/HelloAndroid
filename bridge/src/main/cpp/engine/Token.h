@@ -19,9 +19,9 @@ namespace bridge {
         TYPE_NONE
     };
 
-    class token {
+    class Token {
     public:
-        token(int line) {
+        Token(int line) {
             _line = line;
         }
 
@@ -29,9 +29,9 @@ namespace bridge {
         int _line;
     };
 
-    class identifier_token : public token {
+    class identifier_token : public Token {
     public:
-        identifier_token(string_ptr identifier, int line) : token(line) {
+        identifier_token(string_ptr identifier, int line) : Token(line) {
             _identifier = identifier;
         }
 
@@ -39,6 +39,6 @@ namespace bridge {
         string_ptr _identifier;
     };
 
-    typedef shared_ptr<token> token_ptr;
+    typedef shared_ptr<Token> TokenPtr;
 }
 #endif //HELLOANDROID_TOKEN_H

@@ -5,14 +5,15 @@
 #include "include/common.h"
 #include "include/Bridge.h"
 
-#include "engine/token.h"
+#include "engine/Token.h"
 
 namespace bridge {
     func_def_map_ptr Bridge::s_map_reg_func_def = make_shared<unordered_map<string, bridge::func_def_ptr>>();
     int Bridge::s_bridge_id_index = 0;
 
     Bridge::Bridge() {
-
+        _lexer = make_shared<Lexer>();
+        _parser = make_shared<Parser>(_lexer);
     }
 
     Bridge::~Bridge() {
@@ -29,7 +30,7 @@ namespace bridge {
             vec.push_back(base + to_string(i));
         }
 
-        ast_tree_ptr body = make_shared<outer_func_body>(func_name, vec, outer_func);
+        AstTreePtr body = make_shared<outer_func_body>(func_name, vec, outer_func);
         func_def_ptr func = create_bridge_func(func_name, vec, body);
 
         if (nullptr != func) {
@@ -38,17 +39,17 @@ namespace bridge {
     }
 
     func_def_ptr
-    Bridge::create_bridge_func(string func_name, vector<string> param_name, ast_tree_ptr body) {
+    Bridge::create_bridge_func(string func_name, vector<string> param_name, AstTreePtr body) {
         LOGD("Bridge::create_bridge_func: %s", func_name.c_str());
 
-        ast_leaf_vec_ptr params_vec = make_shared<vector<ast_leaf_ptr>>();
+        AstLeafVecPtr params_vec = make_shared<vector<AstLeafPtr>>();
 
-        token_ptr name_token = make_shared<identifier_token>(make_shared<string>(func_name), 0);
-        ast_leaf_ptr name_leaf = make_shared<ast_leaf>(name_token);
+        TokenPtr name_token = make_shared<identifier_token>(make_shared<string>(func_name), 0);
+        AstLeafPtr name_leaf = make_shared<AstLeaf>(name_token);
 
         for (int i = 0; i < param_name.size(); i++) {
-            token_ptr param_token = make_shared<identifier_token>(make_shared<string>(param_name[i]), 0);
-            ast_leaf_ptr param_leaf = make_shared<ast_leaf>(param_token);
+            TokenPtr param_token = make_shared<identifier_token>(make_shared<string>(param_name[i]), 0);
+            AstLeafPtr param_leaf = make_shared<AstLeaf>(param_token);
             params_vec->push_back(param_leaf);
         }
 
@@ -63,26 +64,40 @@ namespace bridge {
 
     int Bridge::load_code(const char *code) throw(bridge_exception) {
         LOGD("Bridge::load_code");
-        bridge_reader_ptr reader = make_shared<bridge_reader>();
+        ReaderPtr reader = make_shared<Reader>();
         reader->set_code(code);
 
         return load(reader);
     }
 
-    int Bridge::load(bridge_reader_ptr reader) {
+    int Bridge::load(ReaderPtr reader) {
+        build_to_string_func();
+
+        _lexer->set_reader(reader);
+
+        for (auto it = s_map_reg_func_def->begin(); it != s_map_reg_func_def->end(); it++) {
+            _parser->register_func(it->first, it->second);
+        }
+
+        parse();
+
         _id = s_bridge_id_index++;
         return _id;
+    }
+
+    void Bridge::parse() throw(bridge_exception) {
+
     }
 
     void Bridge::build_to_string_func() {
         vector<string> vec;
         vec.push_back("a");
 
-        ast_tree_ptr body = make_shared<to_string_func_body>("a");
+        AstTreePtr body = make_shared<to_string_func_body>("a");
         build_internal_func("toString", vec, body);
     }
 
-    void Bridge::build_internal_func(string name, vector<string> vec_param, ast_tree_ptr body) {
+    void Bridge::build_internal_func(string name, vector<string> vec_param, AstTreePtr body) {
        func_def_ptr func = create_bridge_func(name, vec_param, body);
        if (func != nullptr) {
            reg_func(name, func);
