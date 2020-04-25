@@ -48,7 +48,9 @@ namespace bridge {
     private:
         int _id;
         LexerPtr _lexer;
-        parser_ptr _parser;
+        ParserPtr _parser;
+        AstTreeVecPtr _vec_statement;
+        func_def_map_ptr _map_func_def;
     };
 
     typedef shared_ptr<Bridge> BridgePtr;

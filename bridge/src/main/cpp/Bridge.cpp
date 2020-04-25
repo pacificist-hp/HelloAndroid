@@ -14,6 +14,8 @@ namespace bridge {
     Bridge::Bridge() {
         _lexer = make_shared<Lexer>();
         _parser = make_shared<Parser>(_lexer);
+        _vec_statement = make_shared<vector<AstTreePtr>>();
+        _map_func_def = make_shared<unordered_map<string, func_def_ptr>>();
     }
 
     Bridge::~Bridge() {
@@ -86,7 +88,12 @@ namespace bridge {
     }
 
     void Bridge::parse() throw(bridge_exception) {
+        if (_lexer == nullptr ||  _parser == nullptr) {
+            return;
+        }
 
+        _vec_statement->clear();
+        _map_func_def->clear();
     }
 
     void Bridge::build_to_string_func() {

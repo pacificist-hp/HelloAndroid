@@ -41,7 +41,7 @@ namespace bridge {
         unordered_map<string, func_def_ptr> _map_func_def;
     };
 
-    typedef shared_ptr<Parser> parser_ptr;
+    typedef shared_ptr<Parser> ParserPtr;
 }
 
 #endif //HELLOANDROID_PARSER_H

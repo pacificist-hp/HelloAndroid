@@ -14,6 +14,7 @@ namespace bridge {
     };
 
     typedef shared_ptr<AstTree> AstTreePtr;
+    typedef shared_ptr<vector<AstTreePtr>> AstTreeVecPtr;
 
     class AstLeaf: public AstTree {
     public:
