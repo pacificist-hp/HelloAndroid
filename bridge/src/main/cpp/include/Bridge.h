@@ -5,8 +5,8 @@
 #ifndef HELLOANDROID_BRIDGE_H
 #define HELLOANDROID_BRIDGE_H
 
-#include "../parser/func.h"
-#include "../parser/lexer.h"
+#include "../engine/func.h"
+#include "../engine/lexer.h"
 
 namespace bridge {
 

@@ -5,7 +5,7 @@
 #include "include/common.h"
 #include "include/Bridge.h"
 
-#include "parser/token.h"
+#include "engine/token.h"
 
 namespace bridge {
     func_def_map_ptr Bridge::s_map_reg_func_def = make_shared<unordered_map<string, bridge::func_def_ptr>>();
