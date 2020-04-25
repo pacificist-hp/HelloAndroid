@@ -33,7 +33,7 @@ static JNIEnv *get_env() {
     return NULL;
 }
 
-jobject convert_to_jbridge_value(JNIEnv *env, bridge::bridge_value value) {
+static jobject convert_to_jbridge_value(JNIEnv *env, bridge::bridge_value value) {
     jobject jvalue = NULL;
 
     switch (value._type) {
@@ -51,7 +51,7 @@ jobject convert_to_jbridge_value(JNIEnv *env, bridge::bridge_value value) {
     return jvalue;
 }
 
-bridge::bridge_value convert_to_bridge_value(JNIEnv *env, jobject jvalue) {
+static bridge::bridge_value convert_to_bridge_value(JNIEnv *env, jobject jvalue) {
     bridge::bridge_value value;
 
     if (NULL != jvalue) {
@@ -73,9 +73,9 @@ bridge::bridge_value convert_to_bridge_value(JNIEnv *env, jobject jvalue) {
     return value;
 }
 
-bridge::bridge_value
-out_func_def(int bridge_id, int eval_id, const char *name, bridge::bridge_value *params,
-             int param_num) {
+static bridge::bridge_value
+outer_func_def(int bridge_id, int eval_id, const char *name, bridge::bridge_value *params,
+               int param_num) {
     JNIEnv *env = get_env();
     if (NULL == env) {
         return bridge::bridge_value();
@@ -136,7 +136,7 @@ static jint native_init(JNIEnv *env, jclass clazz) {
 static void native_register_function(JNIEnv *env, jobject thiz, jstring jname, jint jparam_num) {
     const char *name = env->GetStringUTFChars(jname, 0);
     LOGD("native_register_function: %s, %d", name, jparam_num);
-    bridge::Manager::register_function(name, jparam_num, out_func_def);
+    bridge::Manager::register_function(name, jparam_num, outer_func_def);
     env->ReleaseStringUTFChars(jname, name);
 }
 

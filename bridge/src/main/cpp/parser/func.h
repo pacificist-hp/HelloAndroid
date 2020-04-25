@@ -51,5 +51,15 @@ namespace bridge {
     typedef shared_ptr<func_def> func_def_ptr;
 
     typedef shared_ptr<unordered_map<string, func_def_ptr>> func_def_map_ptr;
+
+    class to_string_func_body: public ast_tree {
+    public:
+        to_string_func_body(string param_name) {
+            _param_name = param_name;
+        }
+
+    private:
+        string _param_name;
+    };
 }
 #endif //HELLOANDROID_FUNC_H

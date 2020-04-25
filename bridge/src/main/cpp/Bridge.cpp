@@ -5,11 +5,19 @@
 #include "include/common.h"
 #include "include/Bridge.h"
 
-#include "parser/func.h"
 #include "parser/token.h"
 
 namespace bridge {
     func_def_map_ptr Bridge::s_map_reg_func_def = make_shared<unordered_map<string, bridge::func_def_ptr>>();
+    int Bridge::s_bridge_id_index = 0;
+
+    Bridge::Bridge() {
+
+    }
+
+    Bridge::~Bridge() {
+
+    }
 
     void Bridge::register_function(const char *func_name, int param_num,
                                            bridge::BRIDGE_FUNC_BODY outer_func) {
@@ -48,4 +56,43 @@ namespace bridge {
 
         return make_shared<func_def>(name_leaf, params_list, body);
     }
+
+    int Bridge::get_id() {
+        return _id;
+    }
+
+    int Bridge::load_code(const char *code) throw(bridge_exception) {
+        LOGD("Bridge::load_code");
+        bridge_reader_ptr reader = make_shared<bridge_reader>();
+        reader->set_code(code);
+
+        return load(reader);
+    }
+
+    int Bridge::load(bridge_reader_ptr reader) {
+        _id = s_bridge_id_index++;
+        return _id;
+    }
+
+    void Bridge::build_to_string_func() {
+        vector<string> vec;
+        vec.push_back("a");
+
+        ast_tree_ptr body = make_shared<to_string_func_body>("a");
+        build_internal_func("toString", vec, body);
+    }
+
+    void Bridge::build_internal_func(string name, vector<string> vec_param, ast_tree_ptr body) {
+       func_def_ptr func = create_bridge_func(name, vec_param, body);
+       if (func != nullptr) {
+           reg_func(name, func);
+       }
+    }
+
+    void Bridge::reg_func(string func_name, func_def_ptr func_def) {
+
+    }
+
+
+
 }

@@ -9,14 +9,16 @@
 namespace bridge {
 
     void Manager::register_function(const char *func_name, int param_num,
-                                    BRIDGE_FUNC_BODY out_func) {
+                                    BRIDGE_FUNC_BODY outer_func) {
         LOGD("Manager::register_function: %s, %d", func_name, param_num);
-        bridge::Bridge::register_function(func_name, param_num, out_func);
+        Bridge::register_function(func_name, param_num, outer_func);
     }
 
     int Manager::load_code(const char *code) throw(bridge_exception) {
         LOGD("Manager::load_code");
-        return 0;
+        BridgePtr ptr = make_shared<Bridge>();
+        ptr->load_code(code);
+        return ptr->get_id();
     }
 
     bridge_value
