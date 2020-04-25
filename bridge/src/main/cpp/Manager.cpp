@@ -14,9 +14,9 @@ namespace bridge {
     }
 
     int Manager::load_code(const char *code) throw(bridge_exception) {
-        BridgePtr ptr = make_shared<Bridge>();
-        ptr->load_code(code);
-        return ptr->get_id();
+        BridgePtr bridge = make_shared<Bridge>();
+        bridge->load_code(code);
+        return bridge->get_id();
     }
 
     bridge_value
