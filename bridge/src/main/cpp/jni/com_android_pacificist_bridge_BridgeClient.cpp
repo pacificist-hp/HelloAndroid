@@ -33,22 +33,44 @@ static JNIEnv *get_env() {
     return NULL;
 }
 
-jobject convert_to_bridge_value(JNIEnv *env, bridge::bridge_value value) {
-    jobject result = NULL;
+jobject convert_to_jbridge_value(JNIEnv *env, bridge::bridge_value value) {
+    jobject jvalue = NULL;
 
     switch (value._type) {
         case bridge::STRING: {
             jstring str = env->NewStringUTF(value._string.c_str());
-            result = env->NewObject(BRIDGE_VALUE_CLASS, BRIDGE_VALUE_INIT_STRING_METHOD, str);
+            jvalue = env->NewObject(BRIDGE_VALUE_CLASS, BRIDGE_VALUE_INIT_STRING_METHOD, str);
             env->DeleteLocalRef(str);
             break;
         }
         default:
-            result = env->NewObject(BRIDGE_VALUE_CLASS, BRIDGE_VALUE_INIT_VOID_METHOD);
+            jvalue = env->NewObject(BRIDGE_VALUE_CLASS, BRIDGE_VALUE_INIT_VOID_METHOD);
             break;
     }
 
-    return result;
+    return jvalue;
+}
+
+bridge::bridge_value convert_to_bridge_value(JNIEnv *env, jobject jvalue) {
+    bridge::bridge_value value;
+
+    if (NULL != jvalue) {
+        jint jtype = env->GetIntField(jvalue, BRIDGE_VALUE_TYPE_FIELD);
+        switch (jtype) {
+            case 2: {
+                value._type = bridge::STRING;
+                jstring jstr = (jstring) env->GetObjectField(jvalue, BRIDGE_VALUE_STRING_FIELD);
+                const char *str = env->GetStringUTFChars(jstr, 0);
+                value._string = str;
+                env->ReleaseStringUTFChars(jstr, str);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    return value;
 }
 
 bridge::bridge_value
@@ -59,18 +81,17 @@ out_func_def(int bridge_id, int eval_id, const char *name, bridge::bridge_value 
         return bridge::bridge_value();
     }
 
+    jstring jname = env->NewStringUTF(name);
+
     jobjectArray jparams = NULL;
     if (param_num > 0) {
         jparams = (jobjectArray) env->NewObjectArray(param_num, BRIDGE_VALUE_CLASS, NULL);
 
         for (int i = 0; i < param_num; i++) {
-            env->SetObjectArrayElement(jparams, i, convert_to_bridge_value(env, params[i]));
+            env->SetObjectArrayElement(jparams, i, convert_to_jbridge_value(env, params[i]));
         }
     }
 
-    bridge::bridge_value value;
-
-    jstring jname = env->NewStringUTF(name);
     jobject jvalue = env->CallStaticObjectMethod(BRIDGE_CLIENT_CLASS,
                                                  BRIDGE_CLIENT_CALLBACK_METHOD,
                                                  jname, jparams);
@@ -78,26 +99,10 @@ out_func_def(int bridge_id, int eval_id, const char *name, bridge::bridge_value 
         env->ExceptionDescribe();
         env->ExceptionClear();
 
-        return value;
+        return bridge::bridge_value();
     }
 
-    if (NULL == jvalue) {
-        return value;
-    }
-
-    jint jtype = env->GetIntField(jvalue, BRIDGE_VALUE_TYPE_FIELD);
-    switch (jtype) {
-        case 2: {
-            value._type = bridge::STRING;
-            jstring jstr = (jstring) env->GetObjectField(jvalue, BRIDGE_VALUE_STRING_FIELD);
-            const char *str = env->GetStringUTFChars(jstr, 0);
-            value._string = str;
-            env->ReleaseStringUTFChars(jstr, str);
-            break;
-        }
-        default:
-            break;
-    }
+    bridge::bridge_value value = convert_to_bridge_value(env, jvalue);
 
     env->DeleteLocalRef(jname);
     env->DeleteLocalRef(jparams);
@@ -154,11 +159,30 @@ static jint native_load_code(JNIEnv *env, jobject thiz, jstring jcode) {
 }
 
 static jobject
-native_invoke(JNIEnv *env, jobject thiz, jint jbridge_id, jstring jname, jobject jargs) {
+native_invoke(JNIEnv *env, jobject thiz, jint jbridge_id, jstring jname, jobjectArray jargs) {
     const char *name = env->GetStringUTFChars(jname, 0);
     LOGD("native_invoke: %s", name);
 
-    return NULL;
+    bridge::bridge_value v;
+
+    bridge::bridge_value *args = NULL;
+    int len = NULL == jargs ? 0 : env->GetArrayLength(jargs);
+    if (len > 0) {
+        args = new bridge::bridge_value[len];
+        for (int i = 0; i < len; i++) {
+            args[i] = convert_to_bridge_value(env, env->GetObjectArrayElement(jargs, i));
+        }
+        v = bridge::Manager::invoke(name, args, len);
+        delete[] args;
+    } else {
+        v = bridge::Manager::invoke(name, NULL, 0);
+    }
+
+    env->ReleaseStringUTFChars(jname, name);
+
+    jobject jvalue = convert_to_jbridge_value(env, v);
+
+    return jvalue;
 }
 
 static void native_release(JNIEnv *env, jobject thiz, jint jbridge_id) {
@@ -167,11 +191,11 @@ static void native_release(JNIEnv *env, jobject thiz, jint jbridge_id) {
 }
 
 static const JNINativeMethod nativeMethods[] = {
-        {"nativeInit",             "()I",                                                       (jint *) native_init},
-        {"nativeRegisterFunction", "(Ljava/lang/String;I)V",                                    (void *) native_register_function},
-        {"nativeLoadCode",         "(Ljava/lang/String;)I",                                     (jint *) native_load_code},
-        {"nativeInvoke",           "(ILjava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;", (jobject *) native_invoke},
-        {"nativeRelease",          "(I)V",                                                      (void *) native_release}
+        {"nativeInit",             "()I",                                                        (jint *) native_init},
+        {"nativeRegisterFunction", "(Ljava/lang/String;I)V",                                     (void *) native_register_function},
+        {"nativeLoadCode",         "(Ljava/lang/String;)I",                                      (jint *) native_load_code},
+        {"nativeInvoke",           "(ILjava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;", (jobject *) native_invoke},
+        {"nativeRelease",          "(I)V",                                                       (void *) native_release}
 
 };
 

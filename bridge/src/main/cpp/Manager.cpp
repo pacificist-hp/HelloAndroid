@@ -19,6 +19,12 @@ namespace bridge {
         return 0;
     }
 
+    bridge_value
+    Manager::invoke(string func_name, bridge_value *args, int args_num) throw(bridge_exception) {
+        LOGD("Manager::invoke: %s, %d", func_name.c_str(), args_num);
+        return bridge_value();
+    }
+
     void Manager::release(int bridge_id) {
         LOGD("Manager::release: %d", bridge_id);
     }

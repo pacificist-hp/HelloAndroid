@@ -16,6 +16,9 @@ namespace bridge {
 
         static int load_code(const char *code) throw(bridge_exception);
 
+        static bridge_value
+        invoke(string func_name, bridge_value args[], int args_num) throw(bridge_exception);
+
         static void release(int bridge_id);
     };
 

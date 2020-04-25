@@ -38,16 +38,12 @@ public class BridgeClient {
         return -1;
     }
 
-    public Value invoke(int id, String name, Args args) throws Exception {
+    public Value invoke(int id, String name, Value[] args) throws Exception {
         if (id < 0) {
             throw new IllegalArgumentException("id is illegal");
         }
         if (TextUtils.isEmpty(name)) {
             throw new IllegalArgumentException("function name is empty");
-        }
-
-        if (args == null) {
-            args = new Args();
         }
 
         return (Value) BridgeClient.instance().nativeInvoke(id, name, args);
@@ -79,11 +75,11 @@ public class BridgeClient {
 
     private native void nativeRegisterFunction(String name, int paramNum);
 
-    native int nativeLoadCode(String code) throws Exception;
+    private native int nativeLoadCode(String code) throws Exception;
 
-    native Object nativeInvoke(int id, String name, Object args) throws Exception;
+    private native Object nativeInvoke(int id, String name, Object[] args) throws Exception;
 
-    native void nativeRelease(int id);
+    private native void nativeRelease(int id);
 
     static {
         System.loadLibrary("bridge-lib");
