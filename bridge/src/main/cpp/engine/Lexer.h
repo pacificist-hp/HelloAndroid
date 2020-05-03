@@ -6,6 +6,8 @@
 #define HELLOANDROID_LEXER_H
 
 #include <sstream>
+#include <list>
+#include <stack>
 
 #include "../include/common.h"
 
@@ -40,10 +42,46 @@ namespace bridge {
             _idx = 0;
             _istream = make_shared<istringstream>(code);
         }
+
+        // 不断读取当前行中的词语
+        CharPtr read() {
+            if (_idx >= _str.size()) {
+                _idx = 0;
+                _str = read_line();
+                if (_str.size() == 0) {
+                    return nullptr;
+                }
+            }
+
+            return make_shared<Character>(_str.at(_idx++), _line);
+        }
+
     private:
+        string read_line() {
+            string ret;
+            // 读一行，保存在ret中
+            getline(*_istream, ret);
+            _line++;
+
+            // 如果读到空行，则往下再读一行
+            while (ret.empty()) {
+                if (_istream->eof()) {
+                    return ret;
+                }
+                return read_line();
+            }
+
+            ret += '\n';
+            return ret;
+        }
+
+    private:
+        // 当前行中的第几个字母
         int _idx;
+
         int _line;
 
+        // 当前行的内容
         string _str;
 
         shared_ptr<istream> _istream;
@@ -67,9 +105,199 @@ namespace bridge {
             _current_token = nullptr;
         }
 
+        TokenPtr read() throw(bridge_exception) {
+            TokenPtr token = peek(0);
+            if (token != nullptr) {
+                _token_queue.pop_front();
+                _current_token = token;
+            }
+
+            LOGD("Lexer::read: %s", token == nullptr ? "null" : token->description().c_str());
+            return token;
+        }
+
+        TokenPtr last() {
+            return _current_token;
+        }
+
+        TokenPtr peek(int idx) {
+            if (idx < 0) {
+                return nullptr;
+            }
+
+            if (_token_queue.empty() || _token_queue.size() <= idx) {
+                fill_queue();
+            }
+
+            TokenPtr ret = nullptr;
+            if (!_token_queue.empty()) {
+                if (idx == 0) {
+                    ret = _token_queue.front();
+                } else {
+                    list<TokenPtr>::iterator it = _token_queue.begin();
+                    while (idx--) {
+                        it++;
+                    }
+
+                    ret = *it;
+                }
+            }
+
+            LOGD("Lexer::peek(%d): %s", idx, ret == nullptr ? "null" : ret->description().c_str());
+            return ret;
+        }
+
+    private:
+        void fill_queue() throw(bridge_exception) {
+            TokenPtr token_word = read_token_word();
+            while (token_word != nullptr) {
+                LOGD("Lexer::fill_queue: %s", token_word->description().c_str());
+                _token_queue.push_back(token_word);
+
+                if (_token_queue.size() > 10) {
+                    break;
+                }
+
+                token_word = read_token_word();
+            }
+        }
+
+        TokenPtr read_token_word() throw(bridge_exception) {
+            CharPtr chr = nullptr;
+            do {
+                chr = get_char();
+            } while (is_space(chr));
+
+            if (chr == nullptr) {
+                _reader = nullptr;
+                return nullptr;
+            }
+
+            if (is_digit(chr)) {
+
+            }
+
+            if (is_letter(chr) || chr->_c == '_') {
+                return get_identifier_token(chr);
+            }
+
+            if (chr->_c == '=' || chr->_c == '<' || chr->_c == '>' || chr->_c == '!' ||
+                chr->_c == '+' || chr->_c == '-' || chr->_c == '*' || chr->_c == '/') {
+
+            }
+
+            if (chr->_c == '&') {
+
+            }
+
+            if (chr->_c == '|') {
+
+            }
+
+            if (chr->_c == '\"') {
+                return get_text_token(chr);
+            }
+
+            string_ptr word = make_shared<string>();
+            *word = chr->_c;
+            return make_shared<IdentifierToken>(word, chr->_line);
+        }
+
+        CharPtr get_char() {
+            if (_reader == nullptr) {
+                return nullptr;
+            }
+
+            if (_reversed_char.empty()) {
+                CharPtr chr = _reader->read();
+                return chr;
+            } else {
+                CharPtr chr = _reversed_char.top();
+                _reversed_char.pop();
+                return chr;
+            }
+        }
+
+        TokenPtr get_identifier_token(CharPtr chr) {
+            TokenPtr token = nullptr;
+            string_ptr word = make_shared<string>();
+
+            do {
+                *word += chr->_c;
+                chr = get_char();
+            } while (is_letter(chr) || chr->_c == '_' || is_digit(chr));
+
+            if (*word == "true") {
+
+            } else if (*word == "false") {
+
+            } else if (*word == "null") {
+
+            } else {
+                token = make_shared<IdentifierToken>(word, chr->_line);
+            }
+
+            reverse_char(chr);
+
+            return token;
+        }
+
+        TokenPtr get_text_token(CharPtr chr) {
+            string_ptr word = make_shared<string>();
+            while (true) {
+                chr = get_char();
+                if (chr->_c == '\n') {
+                    throw bridge_exception("string has no end identifier");
+                }
+
+                if (chr == nullptr || chr->_c == '\"') {
+                    break;
+                }
+
+                if (chr->_c == '\\') {
+                    CharPtr next = get_char();
+                    if (next != nullptr) {
+                        if (next->_c == '\"' || next->_c == '\\') {
+                            *word += next->_c;
+                        } else if (next->_c == 'n') {
+                            *word += '\n';
+                        } else {
+                            reverse_char(next);
+                            *word += chr->_c;
+                        }
+                    }
+                } else {
+                    *word += chr->_c;
+                }
+            }
+
+            return make_shared<TextToken>(word, chr->_line);
+        }
+
+        void reverse_char(CharPtr chr) {
+            if (chr != nullptr) {
+                _reversed_char.push(chr);
+            }
+        }
+
+        bool is_space(CharPtr chr) {
+            return chr != nullptr && (chr->_c >= 0 && chr->_c <= ' ');
+        }
+
+        bool is_digit(CharPtr chr) {
+            return chr->_c >= '0' && chr->_c <= '9';
+        }
+
+        bool is_letter(CharPtr chr) {
+            return (chr->_c >= 'a' && chr->_c <= 'z') || (chr->_c >= 'A' && chr->_c <= 'Z');
+        }
+
     private:
         ReaderPtr _reader;
         TokenPtr _current_token;
+
+        stack <CharPtr> _reversed_char;
+        list <TokenPtr> _token_queue;
     };
 
     typedef shared_ptr<Lexer> LexerPtr;

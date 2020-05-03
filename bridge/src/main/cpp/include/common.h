@@ -56,6 +56,15 @@ namespace bridge {
     struct bridge_exception {
         int _line;
         string _msg;
+
+        bridge_exception(string msg, int line) {
+            _msg = msg;
+            _line = line;
+        }
+
+        bridge_exception(string msg) {
+            _msg = msg;
+        }
     };
 
     typedef bridge_value (*BRIDGE_FUNC_BODY)(int bridge_id, int eval_id, const char *name,

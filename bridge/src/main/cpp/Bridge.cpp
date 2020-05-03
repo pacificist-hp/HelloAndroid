@@ -23,7 +23,7 @@ namespace bridge {
     }
 
     void Bridge::register_function(const char *func_name, int param_num,
-                                           bridge::BRIDGE_FUNC_BODY outer_func) {
+                                   bridge::BRIDGE_FUNC_BODY outer_func) {
         LOGD("Bridge::register_function: %s, %d", func_name, param_num);
 
         vector<string> vec;
@@ -46,11 +46,12 @@ namespace bridge {
 
         AstLeafVecPtr params_vec = make_shared<vector<AstLeafPtr>>();
 
-        TokenPtr name_token = make_shared<identifier_token>(make_shared<string>(func_name), 0);
+        TokenPtr name_token = make_shared<IdentifierToken>(make_shared<string>(func_name), 0);
         AstLeafPtr name_leaf = make_shared<AstLeaf>(name_token);
 
         for (int i = 0; i < param_name.size(); i++) {
-            TokenPtr param_token = make_shared<identifier_token>(make_shared<string>(param_name[i]), 0);
+            TokenPtr param_token = make_shared<IdentifierToken>(make_shared<string>(param_name[i]),
+                                                                0);
             AstLeafPtr param_leaf = make_shared<AstLeaf>(param_token);
             params_vec->push_back(param_leaf);
         }
@@ -88,12 +89,32 @@ namespace bridge {
     }
 
     void Bridge::parse() throw(bridge_exception) {
-        if (_lexer == nullptr ||  _parser == nullptr) {
+        LOGD("Bridge::parse");
+
+        if (_lexer == nullptr || _parser == nullptr) {
             return;
         }
 
         _vec_statement->clear();
         _map_func_def->clear();
+
+        TokenPtr ret = _lexer->peek(0);
+        if (ret != nullptr) {
+            AstTreePtr tree = _parser->expression();
+            while (tree != nullptr) {
+                func_def_ptr func_expr = dynamic_pointer_cast<func_def>(tree);
+                if (func_expr != nullptr) {
+                    string name = func_expr->func_name();
+                    _map_func_def->insert({name, func_expr});
+                } else {
+                    _vec_statement->push_back(tree);
+                }
+
+                tree = _parser->expression();
+            }
+        }
+
+
     }
 
     void Bridge::build_to_string_func() {
@@ -105,16 +126,15 @@ namespace bridge {
     }
 
     void Bridge::build_internal_func(string name, vector<string> vec_param, AstTreePtr body) {
-       func_def_ptr func = create_bridge_func(name, vec_param, body);
-       if (func != nullptr) {
-           reg_func(name, func);
-       }
+        func_def_ptr func = create_bridge_func(name, vec_param, body);
+        if (func != nullptr) {
+            reg_func(name, func);
+        }
     }
 
     void Bridge::reg_func(string func_name, func_def_ptr func_def) {
-
+        if (_parser != nullptr) {
+            _parser->register_func(func_name, func_def);
+        }
     }
-
-
-
 }
