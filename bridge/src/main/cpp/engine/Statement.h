@@ -12,6 +12,10 @@ namespace bridge {
     public:
         EmptyStatement() {}
 
+        virtual bridge_value evaluate(EnvironmentPtr &env) throw(bridge_exception) {
+            return bridge_value();
+        }
+
         virtual string description() {
             return "{empty}";
         }

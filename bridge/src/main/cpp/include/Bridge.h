@@ -5,6 +5,7 @@
 #ifndef HELLOANDROID_BRIDGE_H
 #define HELLOANDROID_BRIDGE_H
 
+#include "../engine/Environment.h"
 #include "../engine/Func.h"
 #include "../engine/Lexer.h"
 #include "../engine/Parser.h"
@@ -25,6 +26,9 @@ namespace bridge {
         int get_id();
 
         int load_code(const char *code) throw(bridge_exception);
+
+        bridge_value
+        invoke(string func_name, bridge_value args[], int args_num) throw(bridge_exception);
 
     private:
         static func_def_ptr
@@ -51,6 +55,8 @@ namespace bridge {
         ParserPtr _parser;
         AstTreeVecPtr _vec_statement;
         func_def_map_ptr _map_func_def;
+
+        EnvironmentPtr _env;
     };
 
     typedef shared_ptr<Bridge> BridgePtr;

@@ -5,12 +5,17 @@
 #ifndef HELLOANDROID_ASTTREE_H
 #define HELLOANDROID_ASTTREE_H
 
+#include "Environment.h"
 #include "Token.h"
 
 namespace bridge {
 
     class AstTree {
     public:
+        virtual bridge_value evaluate(EnvironmentPtr &env) throw(bridge_exception) {
+            throw bridge_exception("AstTree cannot evaluate");
+        }
+
         virtual string description() = 0;
     };
 
@@ -45,6 +50,24 @@ namespace bridge {
     class TextLiteral : public AstLeaf {
     public:
         TextLiteral(TokenPtr token) : AstLeaf(token) {}
+
+        virtual bridge_value evaluate(EnvironmentPtr &env) throw(bridge_exception) {
+            bridge_value v;
+            v._type = STRING;
+            v._string = *get_value();
+
+            return v;
+        }
+
+    private:
+        string_ptr get_value() throw(bridge_exception) {
+            TokenPtr t = get_token();
+            if (t != nullptr && t->get_type() == TYPE_TEXT) {
+                return t->get_text();
+            }
+
+            throw bridge_exception("TextLiteral::get_value error");
+        }
     };
 
     class VarLiteral : public AstLeaf {

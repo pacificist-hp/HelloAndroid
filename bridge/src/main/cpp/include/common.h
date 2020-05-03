@@ -51,6 +51,15 @@ namespace bridge {
 
         string _string;
         val_type _type;
+
+        string to_string() {
+            switch (_type) {
+                case STRING:
+                    return _string;
+                default:
+                    return "null";
+            }
+        }
     };
 
     struct bridge_exception {

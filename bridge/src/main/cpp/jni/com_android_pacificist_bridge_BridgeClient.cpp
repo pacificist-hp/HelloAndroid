@@ -167,15 +167,22 @@ native_invoke(JNIEnv *env, jobject thiz, jint jbridge_id, jstring jname, jobject
 
     bridge::bridge_value *args = NULL;
     int len = NULL == jargs ? 0 : env->GetArrayLength(jargs);
-    if (len > 0) {
-        args = new bridge::bridge_value[len];
-        for (int i = 0; i < len; i++) {
-            args[i] = convert_to_bridge_value(env, env->GetObjectArrayElement(jargs, i));
+
+    try {
+        if (len > 0) {
+            args = new bridge::bridge_value[len];
+            for (int i = 0; i < len; i++) {
+                args[i] = convert_to_bridge_value(env, env->GetObjectArrayElement(jargs, i));
+            }
+            v = bridge::Manager::invoke(jbridge_id, name, args, len);
+            delete[] args;
+        } else {
+            v = bridge::Manager::invoke(jbridge_id, name, NULL, 0);
         }
-        v = bridge::Manager::invoke(name, args, len);
-        delete[] args;
-    } else {
-        v = bridge::Manager::invoke(name, NULL, 0);
+    } catch (bridge::bridge_exception &e) {
+        LOGD("exception in native_invoke: %s", e._msg.c_str());
+        jclass clazz = env->FindClass("java/lang/Exception");
+        env->ThrowNew(clazz, e._msg.c_str());
     }
 
     env->ReleaseStringUTFChars(jname, name);

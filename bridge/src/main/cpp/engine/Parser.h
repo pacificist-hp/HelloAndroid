@@ -370,6 +370,8 @@ namespace bridge {
                 } else {
                     AstTreePtr arg = expression();
                     while (arg != nullptr) {
+                        vec->push_back(arg);
+
                         if (peek_next_token(",")) {
                             discard_token(",");
                             arg = expression();
