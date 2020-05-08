@@ -71,8 +71,6 @@ namespace bridge {
     }
 
     int Bridge::load(ReaderPtr reader) {
-        build_to_string_func();
-
         _lexer->set_reader(reader);
 
         for (auto it = s_map_reg_func_def->begin(); it != s_map_reg_func_def->end(); it++) {
@@ -167,26 +165,4 @@ namespace bridge {
         CallStatementPtr call_statement = make_shared<CallStatement>(name_leaf, args_ptr, func_def);
         return call_statement->evaluate(_env);
     }
-
-    void Bridge::build_to_string_func() {
-        vector<string> vec;
-        vec.push_back("a");
-
-        AstTreePtr body = make_shared<to_string_func_body>("a");
-        build_internal_func("toString", vec, body);
-    }
-
-    void Bridge::build_internal_func(string name, vector<string> vec_param, AstTreePtr body) {
-        func_def_ptr func = create_bridge_func(name, vec_param, body);
-        if (func != nullptr) {
-            reg_func(name, func);
-        }
-    }
-
-    void Bridge::reg_func(string func_name, func_def_ptr func_def) {
-        if (_parser != nullptr) {
-            _parser->register_func(func_name, func_def);
-        }
-    }
-
 }

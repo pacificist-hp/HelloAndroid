@@ -83,7 +83,7 @@ namespace bridge {
 
             if (token != nullptr) {
                 if (*token == "(") {
-                    ptr = parse_bracket();
+
                 } else if (*token == "var") {
 
                 } else if (*token == "import") {
@@ -152,39 +152,6 @@ namespace bridge {
                  right == nullptr ? "null" : right->description().c_str());
 
             return make_shared<BinaryExpression>(left, op, right);
-        }
-
-        AstTreePtr parse_bracket() throw(bridge_exception) {
-            discard_token("(");
-
-            AstTreePtr expr = nullptr;
-
-            AstLeafVecPtr vec_leaf = make_shared<vector<AstLeafPtr>>();
-
-            if (!peek_next_token(")")) {
-                expr = expression();
-
-                VarLiteralPtr var_literal = dynamic_pointer_cast<VarLiteral>(expr);
-                while (var_literal != nullptr) {
-                    vec_leaf->push_back(var_literal);
-
-                    if (peek_next_token(",")) {
-
-                    } else {
-                        break;
-                    }
-                }
-            }
-
-            discard_token(")");
-
-            if (peek_next_token("=")) {
-
-            }
-
-            LOGD("Parser::parse_bracket: %s",
-                 expr == nullptr ? "null" : expr->description().c_str());
-            return expr;
         }
 
         AstTreePtr parse_function() throw(bridge_exception) {

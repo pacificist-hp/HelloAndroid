@@ -39,12 +39,6 @@ namespace bridge {
 
         void parse() throw(bridge_exception);
 
-        void build_to_string_func();
-
-        void build_internal_func(string name, vector<string> vec_param, AstTreePtr body);
-
-        void reg_func(string func_name, func_def_ptr func_def);
-
     private:
         static func_def_map_ptr s_map_reg_func_def;
         static int s_bridge_id_index;
