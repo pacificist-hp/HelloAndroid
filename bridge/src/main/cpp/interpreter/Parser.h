@@ -11,7 +11,7 @@
 #include "../include/common.h"
 #include "AstTree.h"
 #include "Expression.h"
-#include "Func.h"
+#include "Function.h"
 #include "Lexer.h"
 #include "Statement.h"
 
@@ -46,15 +46,15 @@ namespace bridge {
         }
 
     public:
-        void register_func(string name, func_def_ptr func_def) {
+        void register_func(string name, FuncPtr func_def) {
             _map_func_def[name] = func_def;
         }
 
-        AstTreePtr expression() throw(bridge_exception) {
+        AstTreePtr expression() throw(BridgeException) {
             AstTreePtr left = factor();
             if (left == nullptr) {
                 if (_lexer->read() != nullptr) {
-                    throw bridge_exception("parse error");
+                    throw BridgeException("parse error");
                 }
                 return nullptr;
             }
@@ -76,10 +76,10 @@ namespace bridge {
         }
 
     private:
-        AstTreePtr factor() throw(bridge_exception) {
+        AstTreePtr factor() throw(BridgeException) {
             AstTreePtr ptr = nullptr;
 
-            string_ptr token = peek_token_text();
+            StringPtr token = peek_token_text();
 
             if (token != nullptr) {
                 if (*token == "(") {
@@ -120,11 +120,11 @@ namespace bridge {
                 }
             }
 
-            LOGD("Parser::shift_factor: %s", ptr == nullptr ? "null" : ptr->description().c_str());
+            LOGD("Parser::factor: %s", ptr == nullptr ? "null" : ptr->description().c_str());
             return ptr;
         }
 
-        AstTreePtr shift_factor(AstTreePtr left, int prec) throw(bridge_exception) {
+        AstTreePtr shift_factor(AstTreePtr left, int prec) throw(BridgeException) {
             AstLeafPtr op = make_shared<AstLeaf>(_lexer->read());
             AstTreePtr right = nullptr;
 
@@ -137,11 +137,11 @@ namespace bridge {
                     err += to_string(t->get_line());
                 }
 
-                throw bridge_exception(err);
+                throw BridgeException(err);
             }
 
             // ternary expression
-            string_ptr str_op = op->try_get_identifier();
+            StringPtr str_op = op->try_get_identifier();
             if (op != nullptr) {
 
             }
@@ -154,28 +154,28 @@ namespace bridge {
             return make_shared<BinaryExpression>(left, op, right);
         }
 
-        AstTreePtr parse_function() throw(bridge_exception) {
+        AstTreePtr parse_function() throw(BridgeException) {
             discard_token("function");
 
             AstLeafPtr name_ptr = make_shared<AstLeaf>(_lexer->read());
             if (name_ptr == nullptr) {
-                throw bridge_exception("syntax: function name");
+                throw BridgeException("syntax: function name");
             }
 
             TokenPtr token_func_name = name_ptr->get_token();
             if (token_func_name == nullptr || token_func_name->get_type() != TYPE_IDENTIFIER) {
-                throw bridge_exception("syntax: function name");
+                throw BridgeException("syntax: function name");
             }
 
-            string_ptr str_ptr = token_func_name->get_identifier();
+            StringPtr str_ptr = token_func_name->get_identifier();
             if (str_ptr == nullptr) {
-                throw bridge_exception("syntax: function name");
+                throw BridgeException("syntax: function name");
             }
 
-            func_param_list_ptr params = parse_func_params();
+            FuncParamListPtr params = parse_func_params();
             AstTreePtr block = parse_block();
 
-            func_def_ptr func = make_shared<func_def>(name_ptr, params, block);
+            FuncPtr func = make_shared<Function>(name_ptr, params, block);
             _map_func_def[*str_ptr] = func;
 
             auto it = _map_vec_undef_func_call.find(*str_ptr);
@@ -193,7 +193,7 @@ namespace bridge {
             return func;
         }
 
-        AstTreePtr parse_literal() throw(bridge_exception) {
+        AstTreePtr parse_literal() throw(BridgeException) {
             TokenPtr token = _lexer->read();
             AstTreePtr ptr = nullptr;
             if (token != nullptr) {
@@ -205,7 +205,7 @@ namespace bridge {
                         ptr = parse_identifier(token);
                         break;
                     default:
-                        throw bridge_exception("syntax: wrong token type");
+                        throw BridgeException("syntax: wrong token type");
                 }
             }
 
@@ -213,15 +213,15 @@ namespace bridge {
             return ptr;
         }
 
-        AstTreePtr parse_identifier(TokenPtr t) throw(bridge_exception) {
+        AstTreePtr parse_identifier(TokenPtr t) throw(BridgeException) {
             AstTreePtr ret = nullptr;
 
-            string_ptr id_ptr = t->get_identifier();
+            StringPtr id_ptr = t->get_identifier();
 
             if (id_ptr != nullptr && _reserved.find(*id_ptr) == _reserved.end()) {
                 AstLeafPtr ptr = make_shared<VarLiteral>(t);
 
-                string_ptr next_token = peek_token_text(0);
+                StringPtr next_token = peek_token_text(0);
                 if (next_token != nullptr) {
                     if (*next_token == "(") {
                         ret = parse_call(ptr);
@@ -241,11 +241,11 @@ namespace bridge {
         AstTreePtr parse_call(AstLeafPtr func_name) {
             CallStatementPtr ptr = nullptr;
 
-            string_ptr name = func_name->try_get_identifier();
+            StringPtr name = func_name->try_get_identifier();
 
             if (name != nullptr) {
                 ArgsListPtr args = parse_func_args();
-                func_def_ptr func_def = nullptr;
+                FuncPtr func_def = nullptr;
 
                 auto it = _map_func_def.find(*name);
                 if (it != _map_func_def.end()) {
@@ -271,13 +271,13 @@ namespace bridge {
             return ptr;
         }
 
-        AstTreePtr parse_block() throw(bridge_exception) {
+        AstTreePtr parse_block() throw(BridgeException) {
             if (peek_next_token("{")) {
                 discard_token("{");
 
                 AstTreeVecPtr vec = make_shared<vector<AstTreePtr>>();
 
-                string_ptr token = peek_token_text();
+                StringPtr token = peek_token_text();
                 while (token != nullptr && *token != "}") {
                     vec->push_back(expression());
                     token = peek_token_text();
@@ -291,7 +291,7 @@ namespace bridge {
             return nullptr;
         }
 
-        func_param_list_ptr parse_func_params() throw(bridge_exception) {
+        FuncParamListPtr parse_func_params() throw(BridgeException) {
             AstLeafVecPtr vec = make_shared<vector<AstLeafPtr>>();
             if (peek_next_token("(")) {
                 discard_token("(");
@@ -313,21 +313,21 @@ namespace bridge {
                                 discard_token(")");
                                 break;
                             } else {
-                                throw bridge_exception("syntax: function params");
+                                throw BridgeException("syntax: function params");
                             }
                         } else {
-                            throw bridge_exception("syntax: function params");
+                            throw BridgeException("syntax: function params");
                         }
                     }
                 }
             } else {
-                throw bridge_exception("syntax: function params");
+                throw BridgeException("syntax: function params");
             }
 
-            return make_shared<func_param_list>(vec);
+            return make_shared<FuncParamList>(vec);
         }
 
-        ArgsListPtr parse_func_args() throw(bridge_exception) {
+        ArgsListPtr parse_func_args() throw(BridgeException) {
             AstTreeVecPtr vec = make_shared<vector<AstTreePtr>>();
             if (peek_next_token("(")) {
                 discard_token("(");
@@ -346,18 +346,18 @@ namespace bridge {
                             discard_token(")");
                             break;
                         } else {
-                            throw bridge_exception("syntax: func args )");
+                            throw BridgeException("syntax: func args )");
                         }
                     }
                 }
             } else {
-                throw bridge_exception("syntax: func args have no ()");
+                throw BridgeException("syntax: func args have no ()");
             }
 
             return make_shared<ArgsList>(vec);
         }
 
-        PrecedencePtr next_op() throw(bridge_exception) {
+        PrecedencePtr next_op() throw(BridgeException) {
             TokenPtr t = _lexer->peek(0);
             if (t != nullptr && t->get_type() == TYPE_IDENTIFIER) {
                 auto it = _operators.find(*(t->get_identifier()));
@@ -374,16 +374,16 @@ namespace bridge {
         void discard_token(string name) {
             TokenPtr token = _lexer->read();
             if (token == nullptr || token->get_text() == nullptr || *(token->get_text()) != name) {
-                throw bridge_exception("discard token error");
+                throw BridgeException("discard token error");
             }
         }
 
-        bool peek_next_token(string name) throw(bridge_exception) {
+        bool peek_next_token(string name) throw(BridgeException) {
             TokenPtr token = _lexer->peek(0);
             return token != nullptr && token->get_text() != nullptr && *(token->get_text()) == name;
         }
 
-        string_ptr peek_token_text(int step = 0) throw(bridge_exception) {
+        StringPtr peek_token_text(int step = 0) throw(BridgeException) {
             TokenPtr token = _lexer->peek(step);
             return token == nullptr ? nullptr : token->get_text();
         }
@@ -393,7 +393,7 @@ namespace bridge {
         unordered_map<string, PrecedencePtr> _operators;
         unordered_set <string> _reserved;
 
-        unordered_map<string, func_def_ptr> _map_func_def;
+        unordered_map<string, FuncPtr> _map_func_def;
         unordered_map<string, shared_ptr<vector<CallStatementPtr>>> _map_vec_undef_func_call;
     };
 

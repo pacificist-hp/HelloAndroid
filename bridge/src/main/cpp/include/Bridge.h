@@ -5,10 +5,10 @@
 #ifndef HELLOANDROID_BRIDGE_H
 #define HELLOANDROID_BRIDGE_H
 
-#include "../engine/Environment.h"
-#include "../engine/Func.h"
-#include "../engine/Lexer.h"
-#include "../engine/Parser.h"
+#include "../interpreter/Environment.h"
+#include "../interpreter/Function.h"
+#include "../interpreter/Lexer.h"
+#include "../interpreter/Parser.h"
 
 namespace bridge {
 
@@ -20,27 +20,27 @@ namespace bridge {
 
     public:
         static void
-        register_function(const char *func_name, int param_num, BRIDGE_FUNC_BODY outer_func);
+        register_function(const char *func_name, int param_num, OUTER_FUNC_CALLBACK outer_func);
 
     public:
         int get_id();
 
-        int load_code(const char *code) throw(bridge_exception);
+        int load_code(const char *code) throw(BridgeException);
 
-        bridge_value
-        invoke(string func_name, bridge_value args[], int args_num) throw(bridge_exception);
+        BridgeValue
+        invoke(string func_name, BridgeValue args[], int args_num) throw(BridgeException);
 
     private:
-        static func_def_ptr
+        static FuncPtr
         create_bridge_func(string func_name, vector<string> param_name, AstTreePtr body);
 
     private:
         int load(ReaderPtr reader);
 
-        void parse() throw(bridge_exception);
+        void parse() throw(BridgeException);
 
     private:
-        static func_def_map_ptr s_map_reg_func_def;
+        static FuncMapPtr s_map_reg_func_def;
         static int s_bridge_id_index;
 
     private:
@@ -48,7 +48,7 @@ namespace bridge {
         LexerPtr _lexer;
         ParserPtr _parser;
         AstTreeVecPtr _vec_statement;
-        func_def_map_ptr _map_func_def;
+        FuncMapPtr _map_func_def;
 
         EnvironmentPtr _env;
     };

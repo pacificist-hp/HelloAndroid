@@ -16,13 +16,13 @@ namespace bridge {
     class Manager {
     public:
         static void
-        register_function(const char *func_name, int param_num, BRIDGE_FUNC_BODY outer_func);
+        register_function(const char *func_name, int param_num, OUTER_FUNC_CALLBACK outer_func);
 
-        static int load_code(const char *code) throw(bridge_exception);
+        static int load_code(const char *code) throw(BridgeException);
 
-        static bridge_value
-        invoke(int bridge_id, string func_name, bridge_value args[],
-               int args_num) throw(bridge_exception);
+        static BridgeValue
+        invoke(int bridge_id, string func_name, BridgeValue args[],
+               int args_num) throw(BridgeException);
 
         static void release(int bridge_id);
 

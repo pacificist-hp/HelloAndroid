@@ -43,7 +43,7 @@ namespace bridge {
             _istream = make_shared<istringstream>(code);
         }
 
-        // 不断读取当前行中的词语
+        // 不断读取当前行中的字符，头指针后移
         CharPtr read() {
             if (_idx >= _str.size()) {
                 _idx = 0;
@@ -105,7 +105,8 @@ namespace bridge {
             _current_token = nullptr;
         }
 
-        TokenPtr read() throw(bridge_exception) {
+        // 不断读取词语，头指针后移
+        TokenPtr read() throw(BridgeException) {
             TokenPtr token = peek(0);
             if (token != nullptr) {
                 _token_queue.pop_front();
@@ -120,6 +121,7 @@ namespace bridge {
             return _current_token;
         }
 
+        // 读取指定位置的词语，头指针不动
         TokenPtr peek(int idx) {
             if (idx < 0) {
                 return nullptr;
@@ -148,7 +150,7 @@ namespace bridge {
         }
 
     private:
-        void fill_queue() throw(bridge_exception) {
+        void fill_queue() throw(BridgeException) {
             TokenPtr token_word = read_token_word();
             while (token_word != nullptr) {
                 LOGD("Lexer::fill_queue: %s", token_word->description().c_str());
@@ -162,7 +164,7 @@ namespace bridge {
             }
         }
 
-        TokenPtr read_token_word() throw(bridge_exception) {
+        TokenPtr read_token_word() throw(BridgeException) {
             CharPtr chr = nullptr;
             do {
                 chr = get_char();
@@ -198,7 +200,7 @@ namespace bridge {
                 return get_text_token(chr);
             }
 
-            string_ptr word = make_shared<string>();
+            StringPtr word = make_shared<string>();
             *word = chr->_c;
             return make_shared<IdentifierToken>(word, chr->_line);
         }
@@ -220,7 +222,7 @@ namespace bridge {
 
         TokenPtr get_identifier_token(CharPtr chr) {
             TokenPtr token = nullptr;
-            string_ptr word = make_shared<string>();
+            StringPtr word = make_shared<string>();
 
             do {
                 *word += chr->_c;
@@ -243,11 +245,11 @@ namespace bridge {
         }
 
         TokenPtr get_text_token(CharPtr chr) {
-            string_ptr word = make_shared<string>();
+            StringPtr word = make_shared<string>();
             while (true) {
                 chr = get_char();
                 if (chr->_c == '\n') {
-                    throw bridge_exception("string has no end identifier");
+                    throw BridgeException("string has no end identifier");
                 }
 
                 if (chr == nullptr || chr->_c == '\"') {

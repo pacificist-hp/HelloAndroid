@@ -5,10 +5,10 @@
 #include "include/common.h"
 #include "include/Bridge.h"
 
-#include "engine/Token.h"
+#include "interpreter/Token.h"
 
 namespace bridge {
-    func_def_map_ptr Bridge::s_map_reg_func_def = make_shared<unordered_map<string, func_def_ptr>>();
+    FuncMapPtr Bridge::s_map_reg_func_def = make_shared<unordered_map<string, FuncPtr>>();
     int Bridge::s_bridge_id_index = 0;
 
     int Environment::s_count = 0;
@@ -17,7 +17,7 @@ namespace bridge {
         _lexer = make_shared<Lexer>();
         _parser = make_shared<Parser>(_lexer);
         _vec_statement = make_shared<vector<AstTreePtr>>();
-        _map_func_def = make_shared<unordered_map<string, func_def_ptr>>();
+        _map_func_def = make_shared<unordered_map<string, FuncPtr>>();
     }
 
     Bridge::~Bridge() {
@@ -25,22 +25,22 @@ namespace bridge {
     }
 
     void Bridge::register_function(const char *func_name, int param_num,
-                                   bridge::BRIDGE_FUNC_BODY outer_func) {
+                                   bridge::OUTER_FUNC_CALLBACK outer_func) {
         vector<string> vec;
         string base = "a";
         for (int i = 0; i < param_num; i++) {
             vec.push_back(base + to_string(i));
         }
 
-        AstTreePtr body = make_shared<outer_func_body>(func_name, vec, outer_func);
-        func_def_ptr func = create_bridge_func(func_name, vec, body);
+        AstTreePtr body = make_shared<OuterFuncBody>(func_name, vec, outer_func);
+        FuncPtr func = create_bridge_func(func_name, vec, body);
 
         if (nullptr != func) {
             s_map_reg_func_def->insert({func_name, func});
         }
     }
 
-    func_def_ptr
+    FuncPtr
     Bridge::create_bridge_func(string func_name, vector<string> param_name, AstTreePtr body) {
         AstLeafVecPtr params_vec = make_shared<vector<AstLeafPtr>>();
 
@@ -54,16 +54,16 @@ namespace bridge {
             params_vec->push_back(param_leaf);
         }
 
-        func_param_list_ptr params_list = make_shared<func_param_list>(params_vec);
+        FuncParamListPtr params_list = make_shared<FuncParamList>(params_vec);
 
-        return make_shared<func_def>(name_leaf, params_list, body);
+        return make_shared<Function>(name_leaf, params_list, body);
     }
 
     int Bridge::get_id() {
         return _id;
     }
 
-    int Bridge::load_code(const char *code) throw(bridge_exception) {
+    int Bridge::load_code(const char *code) throw(BridgeException) {
         ReaderPtr reader = make_shared<Reader>();
         reader->set_code(code);
 
@@ -83,14 +83,14 @@ namespace bridge {
 
         _env = make_shared<Environment>(_id);
         for (auto it: *_vec_statement) {
-            bridge_value v = it->evaluate(_env);
+            BridgeValue v = it->evaluate(_env);
             LOGD("Bridge::load: %s->%s", it->description().c_str(), v.to_string().c_str());
         }
 
         return _id;
     }
 
-    void Bridge::parse() throw(bridge_exception) {
+    void Bridge::parse() throw(BridgeException) {
         if (_lexer == nullptr || _parser == nullptr) {
             return;
         }
@@ -102,7 +102,7 @@ namespace bridge {
         if (ret != nullptr) {
             AstTreePtr tree = _parser->expression();
             while (tree != nullptr) {
-                func_def_ptr func_expr = dynamic_pointer_cast<func_def>(tree);
+                FuncPtr func_expr = dynamic_pointer_cast<Function>(tree);
                 if (func_expr != nullptr) {
                     string name = func_expr->func_name();
                     _map_func_def->insert({name, func_expr});
@@ -115,13 +115,13 @@ namespace bridge {
         }
     }
 
-    bridge_value
-    Bridge::invoke(string func_name, bridge_value *args, int args_num) throw(bridge_exception) {
+    BridgeValue
+    Bridge::invoke(string func_name, BridgeValue *args, int args_num) throw(BridgeException) {
         if (func_name.empty() || args_num < 0) {
-            throw bridge_exception("cannot find function");
+            throw BridgeException("cannot find function");
         }
 
-        string_ptr name = make_shared<string>();
+        StringPtr name = make_shared<string>();
         *name = func_name;
 
         TokenPtr name_token = make_shared<IdentifierToken>(name, 0);
@@ -149,7 +149,7 @@ namespace bridge {
 
         ArgsListPtr args_ptr = make_shared<ArgsList>(vec);
 
-        func_def_ptr func_def = nullptr;
+        FuncPtr func_def = nullptr;
         auto it = _map_func_def->find(func_name);
         if (it != _map_func_def->end()) {
             func_def = it->second;
@@ -159,7 +159,7 @@ namespace bridge {
             string err = "cannot find function: <";
             err += func_name;
             err += ">";
-            throw bridge_exception(err);
+            throw BridgeException(err);
         }
 
         CallStatementPtr call_statement = make_shared<CallStatement>(name_leaf, args_ptr, func_def);

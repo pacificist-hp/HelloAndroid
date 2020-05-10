@@ -31,11 +31,11 @@ namespace bridge {
 
         virtual TokenType get_type() = 0;
 
-        virtual string_ptr get_identifier() {
+        virtual StringPtr get_identifier() {
             return nullptr;
         }
 
-        virtual string_ptr get_text() = 0;
+        virtual StringPtr get_text() = 0;
 
         virtual string description() {
             return "";
@@ -49,11 +49,11 @@ namespace bridge {
 
     class IdentifierToken : public Token {
     public:
-        IdentifierToken(string_ptr identifier, int line) : Token(line) {
+        IdentifierToken(StringPtr identifier, int line) : Token(line) {
             _identifier = identifier;
         }
 
-        virtual string_ptr get_identifier() {
+        virtual StringPtr get_identifier() {
             return _identifier;
         }
 
@@ -61,7 +61,7 @@ namespace bridge {
             return TYPE_IDENTIFIER;
         }
 
-        virtual string_ptr get_text() {
+        virtual StringPtr get_text() {
             return _identifier;
         }
 
@@ -70,12 +70,12 @@ namespace bridge {
         }
 
     private:
-        string_ptr _identifier;
+        StringPtr _identifier;
     };
 
     class TextToken : public Token {
     public:
-        TextToken(string_ptr text, int line) : Token(line) {
+        TextToken(StringPtr text, int line) : Token(line) {
             _text = text;
         }
 
@@ -83,7 +83,7 @@ namespace bridge {
             return TYPE_TEXT;
         }
 
-        virtual string_ptr get_text() {
+        virtual StringPtr get_text() {
             return _text;
         }
 
@@ -95,7 +95,7 @@ namespace bridge {
         }
 
     private:
-        string_ptr _text;
+        StringPtr _text;
     };
 
 }

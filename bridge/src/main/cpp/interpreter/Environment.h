@@ -21,14 +21,14 @@ namespace bridge {
             s_count--;
         }
 
-        void set(string &name, bridge_value &v) {
+        void set(string &name, BridgeValue &v) {
             _map_val[name] = v;
         }
 
-        bridge_value get(string &name) throw(bridge_exception) {
+        BridgeValue get(string &name) throw(BridgeException) {
             auto it = _map_val.find(name);
             if (it == _map_val.end()) {
-                throw bridge_exception(name + " is not in environment");
+                throw BridgeException(name + " is not in environment");
             }
             return it->second;
         }
@@ -38,7 +38,7 @@ namespace bridge {
         }
 
     private:
-        unordered_map <string, bridge_value> _map_val;
+        unordered_map <string, BridgeValue> _map_val;
         weak_ptr<Environment> _outer_env;
 
         int _bridge_id;

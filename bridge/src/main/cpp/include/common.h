@@ -38,13 +38,13 @@ namespace bridge {
         NONE
     };
 
-    struct bridge_value {
+    struct BridgeValue {
     public:
-        bridge_value() {
+        BridgeValue() {
             _type = NONE;
         }
 
-        bridge_value(const char *s) {
+        BridgeValue(const char *s) {
             _string = s;
             _type = STRING;
         }
@@ -62,24 +62,24 @@ namespace bridge {
         }
     };
 
-    struct bridge_exception {
+    struct BridgeException {
         int _line;
         string _msg;
 
-        bridge_exception(string msg, int line) {
+        BridgeException(string msg, int line) {
             _msg = msg;
             _line = line;
         }
 
-        bridge_exception(string msg) {
+        BridgeException(string msg) {
             _msg = msg;
         }
     };
 
-    typedef bridge_value (*BRIDGE_FUNC_BODY)(int bridge_id, int eval_id, const char *name,
-                                             bridge_value *params, int param_num);
+    typedef BridgeValue (*OUTER_FUNC_CALLBACK)(const char *name, BridgeValue *params,
+                                               int param_num);
 
-    typedef shared_ptr<string> string_ptr;
+    typedef shared_ptr<string> StringPtr;
 }
 
 #endif //HELLOANDROID_COMMON_H

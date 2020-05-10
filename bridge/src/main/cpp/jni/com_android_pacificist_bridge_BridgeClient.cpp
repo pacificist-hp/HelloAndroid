@@ -33,7 +33,7 @@ static JNIEnv *get_env() {
     return NULL;
 }
 
-static jobject convert_to_jbridge_value(JNIEnv *env, bridge::bridge_value value) {
+static jobject convert_to_jbridge_value(JNIEnv *env, bridge::BridgeValue value) {
     jobject jvalue = NULL;
 
     switch (value._type) {
@@ -51,8 +51,8 @@ static jobject convert_to_jbridge_value(JNIEnv *env, bridge::bridge_value value)
     return jvalue;
 }
 
-static bridge::bridge_value convert_to_bridge_value(JNIEnv *env, jobject jvalue) {
-    bridge::bridge_value value;
+static bridge::BridgeValue convert_to_bridge_value(JNIEnv *env, jobject jvalue) {
+    bridge::BridgeValue value;
 
     if (NULL != jvalue) {
         jint jtype = env->GetIntField(jvalue, BRIDGE_VALUE_TYPE_FIELD);
@@ -73,12 +73,11 @@ static bridge::bridge_value convert_to_bridge_value(JNIEnv *env, jobject jvalue)
     return value;
 }
 
-static bridge::bridge_value
-outer_func_def(int bridge_id, int eval_id, const char *name, bridge::bridge_value *params,
-               int param_num) {
+static bridge::BridgeValue
+outer_func_callback(const char *name, bridge::BridgeValue *params, int param_num) {
     JNIEnv *env = get_env();
     if (NULL == env) {
-        return bridge::bridge_value();
+        return bridge::BridgeValue();
     }
 
     jstring jname = env->NewStringUTF(name);
@@ -99,10 +98,10 @@ outer_func_def(int bridge_id, int eval_id, const char *name, bridge::bridge_valu
         env->ExceptionDescribe();
         env->ExceptionClear();
 
-        return bridge::bridge_value();
+        return bridge::BridgeValue();
     }
 
-    bridge::bridge_value value = convert_to_bridge_value(env, jvalue);
+    bridge::BridgeValue value = convert_to_bridge_value(env, jvalue);
 
     env->DeleteLocalRef(jname);
     env->DeleteLocalRef(jparams);
@@ -136,7 +135,7 @@ static jint native_init(JNIEnv *env, jclass clazz) {
 static void native_register_function(JNIEnv *env, jobject thiz, jstring jname, jint jparam_num) {
     const char *name = env->GetStringUTFChars(jname, 0);
     LOGD("native_register_function: %s, %d", name, jparam_num);
-    bridge::Manager::register_function(name, jparam_num, outer_func_def);
+    bridge::Manager::register_function(name, jparam_num, outer_func_callback);
     env->ReleaseStringUTFChars(jname, name);
 }
 
@@ -147,7 +146,7 @@ static jint native_load_code(JNIEnv *env, jobject thiz, jstring jcode) {
     int id = -1;
     try {
         id = bridge::Manager::load_code(code);
-    } catch (bridge::bridge_exception &e) {
+    } catch (bridge::BridgeException &e) {
         LOGD("exception in native_load_code: %s", e._msg.c_str());
         jclass clazz = env->FindClass("java/lang/Exception");
         env->ThrowNew(clazz, e._msg.c_str());
@@ -163,14 +162,14 @@ native_invoke(JNIEnv *env, jobject thiz, jint jbridge_id, jstring jname, jobject
     const char *name = env->GetStringUTFChars(jname, 0);
     LOGD("native_invoke: %s", name);
 
-    bridge::bridge_value v;
+    bridge::BridgeValue v;
 
-    bridge::bridge_value *args = NULL;
+    bridge::BridgeValue *args = NULL;
     int len = NULL == jargs ? 0 : env->GetArrayLength(jargs);
 
     try {
         if (len > 0) {
-            args = new bridge::bridge_value[len];
+            args = new bridge::BridgeValue[len];
             for (int i = 0; i < len; i++) {
                 args[i] = convert_to_bridge_value(env, env->GetObjectArrayElement(jargs, i));
             }
@@ -179,7 +178,7 @@ native_invoke(JNIEnv *env, jobject thiz, jint jbridge_id, jstring jname, jobject
         } else {
             v = bridge::Manager::invoke(jbridge_id, name, NULL, 0);
         }
-    } catch (bridge::bridge_exception &e) {
+    } catch (bridge::BridgeException &e) {
         LOGD("exception in native_invoke: %s", e._msg.c_str());
         jclass clazz = env->FindClass("java/lang/Exception");
         env->ThrowNew(clazz, e._msg.c_str());
