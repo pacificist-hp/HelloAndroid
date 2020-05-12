@@ -120,6 +120,25 @@ namespace bridge {
     class VarLiteral : public AstLeaf {
     public:
         VarLiteral(TokenPtr token) : AstLeaf(token) {}
+
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
+            StringPtr name = get_name();
+            if (name != nullptr) {
+                return env->get(*name);
+            }
+
+            throw  BridgeException("VarLiteral::evaluate: variable is null");
+        }
+
+    private:
+        StringPtr get_name() throw(BridgeException) {
+            TokenPtr t = get_token();
+            if (t != nullptr && t->get_type() == TYPE_IDENTIFIER) {
+                return t->get_identifier();
+            }
+
+            throw BridgeException("VarLiteral::get_name: variable's name error");
+        }
     };
 
     typedef shared_ptr<VarLiteral> VarLiteralPtr;

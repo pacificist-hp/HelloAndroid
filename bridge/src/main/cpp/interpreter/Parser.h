@@ -231,6 +231,10 @@ namespace bridge {
 
                     }
                 }
+
+                if (ret == nullptr) {
+                    ret = ptr;
+                }
             }
 
             LOGD("Parser::parse_identifier: %s",

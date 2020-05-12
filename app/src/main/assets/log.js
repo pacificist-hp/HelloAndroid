@@ -1,3 +1,3 @@
-function log_func() {
-    log("hello, world");
+function log_func(msg) {
+    log(msg);
 }

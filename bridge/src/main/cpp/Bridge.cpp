@@ -33,7 +33,7 @@ namespace bridge {
         }
 
         AstTreePtr body = make_shared<OuterFuncBody>(func_name, vec, outer_func);
-        FuncPtr func = create_bridge_func(func_name, vec, body);
+        FuncPtr func = create_function(func_name, vec, body);
 
         if (nullptr != func) {
             s_map_reg_func_def->insert({func_name, func});
@@ -41,12 +41,11 @@ namespace bridge {
     }
 
     FuncPtr
-    Bridge::create_bridge_func(string func_name, vector<string> param_name, AstTreePtr body) {
-        AstLeafVecPtr params_vec = make_shared<vector<AstLeafPtr>>();
-
+    Bridge::create_function(string func_name, vector<string> param_name, AstTreePtr body) {
         TokenPtr name_token = make_shared<IdentifierToken>(make_shared<string>(func_name), 0);
         AstLeafPtr name_leaf = make_shared<AstLeaf>(name_token);
 
+        AstLeafVecPtr params_vec = make_shared<vector<AstLeafPtr>>();
         for (int i = 0; i < param_name.size(); i++) {
             TokenPtr param_token = make_shared<IdentifierToken>(make_shared<string>(param_name[i]),
                                                                 0);

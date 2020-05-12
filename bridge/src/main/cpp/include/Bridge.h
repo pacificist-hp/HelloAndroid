@@ -32,7 +32,7 @@ namespace bridge {
 
     private:
         static FuncPtr
-        create_bridge_func(string func_name, vector<string> param_name, AstTreePtr body);
+        create_function(string func_name, vector<string> param_name, AstTreePtr body);
 
     private:
         int load(ReaderPtr reader);
