@@ -25,6 +25,30 @@ namespace bridge {
             _map_val[name] = v;
         }
 
+        void put(string &name, BridgeValue &v) throw(BridgeException) {
+            if (exist(name)) {
+                _map_val[name] = v;
+                return;
+            }
+
+            shared_ptr<Environment> env = _outer_env.lock();
+            while (env != nullptr) {
+                if (env->exist(name)) {
+                    env->put(name, v);
+                    return;
+                }
+
+                env = env->_outer_env.lock();
+            }
+
+            string err = "\"";
+            err += name;
+            err += "\"";
+            err += "is not defined";
+
+            throw BridgeException(err);
+        }
+
         BridgeValue get(string &name) throw(BridgeException) {
             auto it = _map_val.find(name);
             if (it == _map_val.end()) {
@@ -35,6 +59,11 @@ namespace bridge {
 
         int get_bridge_id() {
             return _bridge_id;
+        }
+
+    private:
+        bool exist(string &name) {
+            return _map_val.find(name) != _map_val.end();
         }
 
     private:

@@ -119,7 +119,7 @@ namespace bridge {
 
     class VarLiteral : public AstLeaf {
     public:
-        VarLiteral(TokenPtr token) : AstLeaf(token) {}
+        VarLiteral(TokenPtr var_name) : AstLeaf(var_name) {}
 
         virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
             StringPtr name = get_name();
@@ -127,14 +127,28 @@ namespace bridge {
                 return env->get(*name);
             }
 
-            throw  BridgeException("VarLiteral::evaluate: variable is null");
+            throw BridgeException("VarLiteral::evaluate: variable is null");
+        }
+
+        void assign(EnvironmentPtr &env, BridgeValue value) throw(BridgeException) {
+            StringPtr name = get_name();
+            if (name != nullptr) {
+                env->put(*name, value);
+            }
+        }
+
+        void define(EnvironmentPtr &env, BridgeValue value) {
+            StringPtr name = get_name();
+            if (name != nullptr) {
+                env->set(*name, value);
+            }
         }
 
     private:
         StringPtr get_name() throw(BridgeException) {
-            TokenPtr t = get_token();
-            if (t != nullptr && t->get_type() == TYPE_IDENTIFIER) {
-                return t->get_identifier();
+            TokenPtr name = get_token();
+            if (name != nullptr && name->get_type() == TYPE_IDENTIFIER) {
+                return name->get_identifier();
             }
 
             throw BridgeException("VarLiteral::get_name: variable's name error");

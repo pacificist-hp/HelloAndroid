@@ -85,7 +85,7 @@ namespace bridge {
                 if (*token == "(") {
 
                 } else if (*token == "var") {
-
+                    ptr = parse_var();
                 } else if (*token == "import") {
 
                 } else if (*token == "export") {
@@ -152,6 +152,35 @@ namespace bridge {
                  right == nullptr ? "null" : right->description().c_str());
 
             return make_shared<BinaryExpression>(left, op, right);
+        }
+
+        AstTreePtr parse_var() throw(BridgeException) {
+            discard_token("var");
+
+            TokenPtr name_token = _lexer->read();
+            if (name_token == nullptr) {
+                throw BridgeException("syntax: var miss identifier");
+            }
+
+            StringPtr name = name_token->get_identifier();
+            if (name == nullptr) {
+                throw BridgeException("syntax: var miss identifier");
+            }
+
+            if (_reserved.find(*name) != _reserved.end()) {
+                throw BridgeException("syntax: var miss identifier");
+            }
+
+            VarLiteralPtr var_literal = make_shared<VarLiteral>(name_token);
+            AstTreePtr value = nullptr;
+            if (peek_next_token("=")) {
+                discard_token("=");
+                value = expression();
+            }
+
+            AstTreePtr var = make_shared<VarStatement>(var_literal, value);
+            LOGD("Parser::parse_var: %s", var == nullptr ? "null" : var->description().c_str());
+            return var;
         }
 
         AstTreePtr parse_function() throw(BridgeException) {

@@ -21,6 +21,34 @@ namespace bridge {
         }
     };
 
+    class VarStatement : public AstTree {
+    public:
+        VarStatement(VarLiteralPtr var_literal, AstTreePtr value) {
+            _var_literal = var_literal;
+            _value = value;
+        }
+
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
+            BridgeValue value = _value == nullptr ? BridgeValue() : _value->evaluate(env);
+            _var_literal->define(env, value);
+            return value;
+        }
+
+        virtual string description() {
+            string desc = "var ";
+            desc += _var_literal->description();
+            if (_value != nullptr) {
+                desc += " = ";
+                desc += _value->description();
+            }
+
+            return desc;
+        }
+    private:
+        VarLiteralPtr _var_literal;
+        AstTreePtr _value;
+    };
+
     class BlockStatement : public AstList {
     public:
         BlockStatement(AstTreeVecPtr children) : AstList(children) {}
