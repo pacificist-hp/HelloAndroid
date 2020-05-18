@@ -180,8 +180,10 @@ native_invoke(JNIEnv *env, jobject thiz, jint jbridge_id, jstring jname, jobject
         }
     } catch (bridge::BridgeException &e) {
         LOGD("exception in native_invoke: %s", e._msg.c_str());
+        env->ReleaseStringUTFChars(jname, name);
         jclass clazz = env->FindClass("java/lang/Exception");
         env->ThrowNew(clazz, e._msg.c_str());
+        return NULL;
     }
 
     env->ReleaseStringUTFChars(jname, name);
