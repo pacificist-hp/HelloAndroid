@@ -286,7 +286,7 @@ namespace bridge {
                 }
 
                 ptr = make_shared<CallStatement>(func_name, args, func_def);
-                if (func_def != nullptr) {
+                if (func_def == nullptr) {
                     shared_ptr<vector<CallStatementPtr>> vec_ptr = nullptr;
                     auto it = _map_vec_undef_func_call.find(*name);
                     if (it == _map_vec_undef_func_call.end()) {
@@ -426,7 +426,9 @@ namespace bridge {
         unordered_map<string, PrecedencePtr> _operators;
         unordered_set <string> _reserved;
 
+        // 保存已注册或定义好的函数
         unordered_map<string, FuncPtr> _map_func_def;
+        // 语法解析时，函数调用在函数调用之前，保存暂未定义的函数调用
         unordered_map<string, shared_ptr<vector<CallStatementPtr>>> _map_vec_undef_func_call;
     };
 
