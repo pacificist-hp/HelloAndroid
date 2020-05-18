@@ -428,7 +428,7 @@ namespace bridge {
 
         // 保存已注册或定义好的函数
         unordered_map<string, FuncPtr> _map_func_def;
-        // 语法解析时，函数调用在函数调用之前，保存暂未定义的函数调用
+        // 语法解析时，函数调用在函数定义之前，保存暂未定义的函数
         unordered_map<string, shared_ptr<vector<CallStatementPtr>>> _map_vec_undef_func_call;
     };
 
