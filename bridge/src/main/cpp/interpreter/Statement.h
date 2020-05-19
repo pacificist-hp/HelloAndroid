@@ -44,6 +44,7 @@ namespace bridge {
 
             return desc;
         }
+
     private:
         VarLiteralPtr _var_literal;
         AstTreePtr _value;
@@ -121,6 +122,69 @@ namespace bridge {
     };
 
     typedef shared_ptr<CallStatement> CallStatementPtr;
+
+    // for "if" and "while"
+    class ConditionStatement : public AstTree {
+    public:
+        ConditionStatement(AstTreePtr condition) {
+            _condition = condition;
+        }
+
+        bool is_condition_true(EnvironmentPtr &env) {
+            bool ret = false;
+            BridgeValue value = _condition->evaluate(env);
+            if (value._type == STRING) {
+                ret = !value._string.empty();
+            }
+
+            return ret;
+        }
+
+        virtual string description() {
+            return _condition == nullptr ? "" : _condition->description();
+        }
+
+    protected:
+        AstTreePtr _condition;
+    };
+
+    class IfStatement : public ConditionStatement {
+    public:
+        IfStatement(AstTreePtr condition, AstTreePtr then_block, AstTreePtr else_block)
+                : ConditionStatement(condition) {
+            _then_block = then_block;
+            _else_block = else_block;
+        }
+
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
+            BridgeValue value;
+            if (is_condition_true(env)) {
+                value = _then_block->evaluate(env);
+            } else {
+                value = _else_block->evaluate(env);
+            }
+
+            return value;
+        }
+
+        virtual string description() {
+            string desc = "if(";
+            desc += _condition->description();
+            desc += ") ";
+            desc += _then_block->description();
+
+            if (_else_block != nullptr) {
+                desc += " else ";
+                desc += _else_block->description();
+            }
+
+            return desc;
+        }
+
+    private:
+        AstTreePtr _then_block;
+        AstTreePtr _else_block;
+    };
 }
 
 #endif //HELLOANDROID_STATEMENT_H

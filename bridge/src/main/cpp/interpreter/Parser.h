@@ -83,7 +83,7 @@ namespace bridge {
 
             if (token != nullptr) {
                 if (*token == "(") {
-
+                    ptr = parse_bracket();
                 } else if (*token == "var") {
                     ptr = parse_var();
                 } else if (*token == "import") {
@@ -93,7 +93,7 @@ namespace bridge {
                 } else if (*token == "!" || *token == "-" || *token == "++" || *token == "--") {
 
                 } else if (*token == "if") {
-
+                    ptr = parse_if();
                 } else if (*token == "for") {
 
                 } else if (*token == "while") {
@@ -154,6 +154,27 @@ namespace bridge {
             return make_shared<BinaryExpression>(left, op, right);
         }
 
+        AstTreePtr parse_bracket() throw(BridgeException) {
+            discard_token("(");
+
+            AstTreePtr ptr = nullptr;
+            AstLeafVecPtr vec_leaf = make_shared<vector<AstLeafPtr>>();
+            if (!peek_next_token(")")) {
+                ptr = expression();
+
+
+            }
+
+            discard_token(")");
+
+            if (peek_next_token("=")) {
+
+            }
+
+            LOGD("Parser::parse_bracket: %s", ptr == nullptr ? "null" : ptr->description().c_str());
+            return ptr;
+        }
+
         AstTreePtr parse_var() throw(BridgeException) {
             discard_token("var");
 
@@ -181,6 +202,27 @@ namespace bridge {
             AstTreePtr var = make_shared<VarStatement>(var_literal, value);
             LOGD("Parser::parse_var: %s", var == nullptr ? "null" : var->description().c_str());
             return var;
+        }
+
+        AstTreePtr parse_if() throw(BridgeException) {
+            discard_token("if");
+            AstTreePtr condition = factor();
+            AstTreePtr then_block = parse_block();
+            AstTreePtr else_block = nullptr;
+
+            if(peek_next_token("else")) {
+                discard_token("else");
+
+                if (peek_next_token("if")) {
+                    else_block = parse_if();
+                } else {
+                    else_block = parse_block();
+                }
+            }
+
+            AstTreePtr ret = make_shared<IfStatement>(condition, then_block, else_block);
+            LOGD("Parser::parse_if: %s", ret == nullptr ? "null" : ret->description().c_str());
+            return ret;
         }
 
         AstTreePtr parse_function() throw(BridgeException) {

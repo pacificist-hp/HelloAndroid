@@ -22,8 +22,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             bridgeId = BridgeClient.instance().loadCode(readAssets("log.js"));
             if (bridgeId != -1) {
-                Value param = new Value("hello, android");
-                Value[] params = {param};
+                Value[] params = {new Value(""), new Value("")};
                 Value value = BridgeClient.instance().invoke(bridgeId, "log_func", params);
                 Log.d("bridge_app", "invoke: " + value);
             }

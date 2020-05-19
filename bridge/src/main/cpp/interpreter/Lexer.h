@@ -145,7 +145,6 @@ namespace bridge {
                 }
             }
 
-            LOGD("Lexer::peek(%d): %s", idx, ret == nullptr ? "null" : ret->description().c_str());
             return ret;
         }
 
