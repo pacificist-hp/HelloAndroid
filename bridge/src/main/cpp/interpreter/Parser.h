@@ -81,6 +81,8 @@ namespace bridge {
 
             StringPtr token = peek_token_text();
 
+            LOGD("Parser::factor start: %s", token == nullptr ? "null" : token->c_str());
+
             if (token != nullptr) {
                 if (*token == "(") {
                     ptr = parse_bracket();
@@ -266,22 +268,23 @@ namespace bridge {
 
         AstTreePtr parse_literal() throw(BridgeException) {
             TokenPtr token = _lexer->read();
-            AstTreePtr ptr = nullptr;
+            AstTreePtr literal = nullptr;
             if (token != nullptr) {
                 switch (token->get_type()) {
                     case TYPE_TEXT:
-                        ptr = make_shared<TextLiteral>(token);
+                        literal = make_shared<TextLiteral>(token);
                         break;
                     case TYPE_IDENTIFIER:
-                        ptr = parse_identifier(token);
+                        literal = parse_identifier(token);
                         break;
                     default:
                         throw BridgeException("syntax: wrong token type");
                 }
             }
 
-            LOGD("Parser::parse_literal: %s", ptr == nullptr ? "null" : ptr->description().c_str());
-            return ptr;
+            LOGD("Parser::parse_literal: %s",
+                 literal == nullptr ? "null" : literal->description().c_str());
+            return literal;
         }
 
         AstTreePtr parse_identifier(TokenPtr t) throw(BridgeException) {
@@ -314,7 +317,7 @@ namespace bridge {
         }
 
         AstTreePtr parse_call(AstLeafPtr func_name) {
-            CallStatementPtr ptr = nullptr;
+            CallStatementPtr call = nullptr;
 
             StringPtr name = func_name->try_get_identifier();
 
@@ -327,7 +330,7 @@ namespace bridge {
                     func_def = it->second;
                 }
 
-                ptr = make_shared<CallStatement>(func_name, args, func_def);
+                call = make_shared<CallStatement>(func_name, args, func_def);
                 if (func_def == nullptr) {
                     shared_ptr<vector<CallStatementPtr>> vec_ptr = nullptr;
                     auto it = _map_vec_undef_func_call.find(*name);
@@ -338,15 +341,17 @@ namespace bridge {
                         vec_ptr = it->second;
                     }
 
-                    vec_ptr->push_back(ptr);
+                    vec_ptr->push_back(call);
                 }
             }
 
-            LOGD("Parser::parse_call: %s", ptr == nullptr ? "null" : ptr->description().c_str());
-            return ptr;
+            LOGD("Parser::parse_call: %s", call == nullptr ? "null" : call->description().c_str());
+            return call;
         }
 
         AstTreePtr parse_block() throw(BridgeException) {
+            AstTreePtr block = nullptr;
+
             if (peek_next_token("{")) {
                 discard_token("{");
 
@@ -360,10 +365,12 @@ namespace bridge {
 
                 discard_token("}");
 
-                return make_shared<BlockStatement>(vec);
+                block = make_shared<BlockStatement>(vec);
             }
 
-            return nullptr;
+            LOGD("Parser::parse_block: %s",
+                 block == nullptr ? "null" : block->description().c_str());
+            return block;
         }
 
         FuncParamListPtr parse_func_params() throw(BridgeException) {
@@ -399,6 +406,9 @@ namespace bridge {
                 throw BridgeException("syntax: function params");
             }
 
+            FuncParamListPtr ret = make_shared<FuncParamList>(vec);
+            LOGD("Parser::parse_func_params: %s",
+                 ret == nullptr ? "null" : ret->description().c_str());
             return make_shared<FuncParamList>(vec);
         }
 
@@ -429,7 +439,10 @@ namespace bridge {
                 throw BridgeException("syntax: func args have no ()");
             }
 
-            return make_shared<ArgsList>(vec);
+            ArgsListPtr ret = make_shared<ArgsList>(vec);
+            LOGD("Parser::parse_func_args: %s",
+                 ret == nullptr ? "null" : ret->description().c_str());
+            return ret;
         }
 
         PrecedencePtr next_op() throw(BridgeException) {

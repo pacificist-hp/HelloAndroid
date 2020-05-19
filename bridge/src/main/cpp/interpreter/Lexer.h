@@ -152,7 +152,6 @@ namespace bridge {
         void fill_queue() throw(BridgeException) {
             TokenPtr token_word = read_token_word();
             while (token_word != nullptr) {
-                LOGD("Lexer::fill_queue: %s", token_word->description().c_str());
                 _token_queue.push_back(token_word);
 
                 if (_token_queue.size() > 10) {
