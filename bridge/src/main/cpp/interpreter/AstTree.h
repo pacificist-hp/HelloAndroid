@@ -93,69 +93,6 @@ namespace bridge {
     protected:
         AstTreeVecPtr _children;
     };
-
-    class TextLiteral : public AstLeaf {
-    public:
-        TextLiteral(TokenPtr token) : AstLeaf(token) {}
-
-        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
-            BridgeValue v;
-            v._type = STRING;
-            v._string = *get_value();
-
-            return v;
-        }
-
-    private:
-        StringPtr get_value() throw(BridgeException) {
-            TokenPtr t = get_token();
-            if (t != nullptr && t->get_type() == TYPE_TEXT) {
-                return t->get_text();
-            }
-
-            throw BridgeException("TextLiteral::get_value error");
-        }
-    };
-
-    class VarLiteral : public AstLeaf {
-    public:
-        VarLiteral(TokenPtr var_name) : AstLeaf(var_name) {}
-
-        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
-            StringPtr name = get_name();
-            if (name != nullptr) {
-                return env->get(*name);
-            }
-
-            throw BridgeException("VarLiteral::evaluate: variable is null");
-        }
-
-        void assign(EnvironmentPtr &env, BridgeValue value) throw(BridgeException) {
-            StringPtr name = get_name();
-            if (name != nullptr) {
-                env->put(*name, value);
-            }
-        }
-
-        void define(EnvironmentPtr &env, BridgeValue value) {
-            StringPtr name = get_name();
-            if (name != nullptr) {
-                env->set(*name, value);
-            }
-        }
-
-    private:
-        StringPtr get_name() throw(BridgeException) {
-            TokenPtr name = get_token();
-            if (name != nullptr && name->get_type() == TYPE_IDENTIFIER) {
-                return name->get_identifier();
-            }
-
-            throw BridgeException("VarLiteral::get_name: variable's name error");
-        }
-    };
-
-    typedef shared_ptr<VarLiteral> VarLiteralPtr;
 }
 
 #endif //HELLOANDROID_ASTTREE_H

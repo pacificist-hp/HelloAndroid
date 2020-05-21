@@ -1,14 +1,8 @@
-function log_func(msg1, msg2) {
-    if (msg1) {
-        log_msg(msg1);
-    } else if (msg2) {
-        log_msg(msg2);
+function log_func(isDefault, msg) {
+    if (isDefault) {
+        var def = "hello default";
+        log(def);
     } else {
-        var def = "hello if else";
-        log_msg(def);
+        log(msg);
     }
-}
-
-function log_msg(msg) {
-    log(msg);
 }

@@ -13,6 +13,7 @@
 #include "Expression.h"
 #include "Function.h"
 #include "Lexer.h"
+#include "Literal.h"
 #include "Statement.h"
 
 namespace bridge {
@@ -212,7 +213,7 @@ namespace bridge {
             AstTreePtr then_block = parse_block();
             AstTreePtr else_block = nullptr;
 
-            if(peek_next_token("else")) {
+            if (peek_next_token("else")) {
                 discard_token("else");
 
                 if (peek_next_token("if")) {
@@ -271,11 +272,23 @@ namespace bridge {
             AstTreePtr literal = nullptr;
             if (token != nullptr) {
                 switch (token->get_type()) {
+                    case TYPE_INTEGER:
+                        literal = make_shared<IntLiteral>(token);
+                        break;
+                    case TYPE_FLOAT:
+                        literal = make_shared<FloatLiteral>(token);
+                        break;
+                    case TYPE_BOOL:
+                        literal = make_shared<BoolLiteral>(token);
+                        break;
                     case TYPE_TEXT:
                         literal = make_shared<TextLiteral>(token);
                         break;
                     case TYPE_IDENTIFIER:
                         literal = parse_identifier(token);
+                        break;
+                    case TYPE_NONE:
+                        literal = make_shared<NullLiteral>(token);
                         break;
                     default:
                         throw BridgeException("syntax: wrong token type");

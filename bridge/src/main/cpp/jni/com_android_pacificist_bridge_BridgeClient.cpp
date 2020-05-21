@@ -12,12 +12,18 @@ extern "C" {
 jclass BRIDGE_CLIENT_CLASS;
 jclass BRIDGE_VALUE_CLASS;
 
+jmethodID BRIDGE_VALUE_INIT_INT_METHOD;
+jmethodID BRIDGE_VALUE_INIT_FLOAT_METHOD;
+jmethodID BRIDGE_VALUE_INIT_BOOL_METHOD;
 jmethodID BRIDGE_VALUE_INIT_STRING_METHOD;
 jmethodID BRIDGE_VALUE_INIT_VOID_METHOD;
 
 jmethodID BRIDGE_CLIENT_CALLBACK_METHOD;
 
 jfieldID BRIDGE_VALUE_TYPE_FIELD;
+jfieldID BRIDGE_VALUE_INT_FIELD;
+jfieldID BRIDGE_VALUE_FLOAT_FIELD;
+jfieldID BRIDGE_VALUE_BOOL_FIELD;
 jfieldID BRIDGE_VALUE_STRING_FIELD;
 
 /* JavaVM is valid globally */
@@ -37,6 +43,16 @@ static jobject convert_to_jbridge_value(JNIEnv *env, bridge::BridgeValue value) 
     jobject jvalue = NULL;
 
     switch (value._type) {
+        case bridge::INT:
+            jvalue = env->NewObject(BRIDGE_VALUE_CLASS, BRIDGE_VALUE_INIT_INT_METHOD, value._int);
+            break;
+        case bridge::FLOAT:
+            jvalue = env->NewObject(BRIDGE_VALUE_CLASS, BRIDGE_VALUE_INIT_FLOAT_METHOD,
+                                    value._float);
+            break;
+        case bridge::BOOL:
+            jvalue = env->NewObject(BRIDGE_VALUE_CLASS, BRIDGE_VALUE_INIT_BOOL_METHOD, value._bool);
+            break;
         case bridge::STRING: {
             jstring str = env->NewStringUTF(value._string.c_str());
             jvalue = env->NewObject(BRIDGE_VALUE_CLASS, BRIDGE_VALUE_INIT_STRING_METHOD, str);
@@ -57,7 +73,19 @@ static bridge::BridgeValue convert_to_bridge_value(JNIEnv *env, jobject jvalue) 
     if (NULL != jvalue) {
         jint jtype = env->GetIntField(jvalue, BRIDGE_VALUE_TYPE_FIELD);
         switch (jtype) {
-            case 2: {
+            case 1:
+                value._type = bridge::INT;
+                value._int = env->GetLongField(jvalue, BRIDGE_VALUE_INT_FIELD);
+                break;
+            case 2:
+                value._type = bridge::FLOAT;
+                value._float = env->GetFloatField(jvalue, BRIDGE_VALUE_FLOAT_FIELD);
+                break;
+            case 3:
+                value._type = bridge::BOOL;
+                value._bool = env->GetBooleanField(jvalue, BRIDGE_VALUE_BOOL_FIELD);
+                break;
+            case 4: {
                 value._type = bridge::STRING;
                 jstring jstr = (jstring) env->GetObjectField(jvalue, BRIDGE_VALUE_STRING_FIELD);
                 const char *str = env->GetStringUTFChars(jstr, 0);
@@ -118,6 +146,9 @@ static jint native_init(JNIEnv *env, jclass clazz) {
     BRIDGE_VALUE_CLASS = (jclass) env->NewGlobalRef(
             env->FindClass("com/android/pacificist/bridge/Value"));
 
+    BRIDGE_VALUE_INIT_INT_METHOD = env->GetMethodID(BRIDGE_VALUE_CLASS, "<init>", "(J)V");
+    BRIDGE_VALUE_INIT_FLOAT_METHOD = env->GetMethodID(BRIDGE_VALUE_CLASS, "<init>", "(F)V");
+    BRIDGE_VALUE_INIT_BOOL_METHOD = env->GetMethodID(BRIDGE_VALUE_CLASS, "<init>", "(Z)V");
     BRIDGE_VALUE_INIT_STRING_METHOD = env->GetMethodID(BRIDGE_VALUE_CLASS, "<init>",
                                                        "(Ljava/lang/String;)V");
     BRIDGE_VALUE_INIT_VOID_METHOD = env->GetMethodID(BRIDGE_VALUE_CLASS, "<init>", "()V");
@@ -126,6 +157,9 @@ static jint native_init(JNIEnv *env, jclass clazz) {
                                                            "(Ljava/lang/String;[Lcom/android/pacificist/bridge/Value;)Lcom/android/pacificist/bridge/Value;");
 
     BRIDGE_VALUE_TYPE_FIELD = env->GetFieldID(BRIDGE_VALUE_CLASS, "type", "I");
+    BRIDGE_VALUE_INT_FIELD = env->GetFieldID(BRIDGE_VALUE_CLASS, "intVal", "J");
+    BRIDGE_VALUE_FLOAT_FIELD = env->GetFieldID(BRIDGE_VALUE_CLASS, "floatVal", "F");
+    BRIDGE_VALUE_BOOL_FIELD = env->GetFieldID(BRIDGE_VALUE_CLASS, "boolVal", "Z");
     BRIDGE_VALUE_STRING_FIELD = env->GetFieldID(BRIDGE_VALUE_CLASS, "stringVal",
                                                 "Ljava/lang/String;");
 

@@ -35,7 +35,7 @@ namespace bridge {
         create_function(string func_name, vector<string> param_name, AstTreePtr body);
 
     private:
-        int load(ReaderPtr reader);
+        int load(ReaderPtr reader) throw(BridgeException);
 
         void parse() throw(BridgeException);
 

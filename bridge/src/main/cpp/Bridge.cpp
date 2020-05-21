@@ -5,6 +5,7 @@
 #include "include/common.h"
 #include "include/Bridge.h"
 
+#include "interpreter/Literal.h"
 #include "interpreter/Token.h"
 
 namespace bridge {
@@ -69,7 +70,7 @@ namespace bridge {
         return load(reader);
     }
 
-    int Bridge::load(ReaderPtr reader) {
+    int Bridge::load(ReaderPtr reader) throw(BridgeException) {
         _lexer->set_reader(reader);
 
         for (auto it = s_map_reg_func_def->begin(); it != s_map_reg_func_def->end(); it++) {
@@ -133,9 +134,25 @@ namespace bridge {
             TokenPtr token = nullptr;
 
             switch (args[i]._type) {
+                case INT:
+                    token = make_shared<IntToken>(args[i]._int, 0);
+                    arg = make_shared<IntLiteral>(token);
+                    break;
+                case FLOAT:
+                    token = make_shared<FloatToken>(args[i]._float, 0);
+                    arg = make_shared<FloatLiteral>(token);
+                    break;
+                case BOOL:
+                    token = make_shared<BoolToken>(args[i]._bool, 0);
+                    arg = make_shared<BoolLiteral>(token);
+                    break;
                 case STRING:
                     token = make_shared<TextToken>(make_shared<string>(args[i]._string), 0);
                     arg = make_shared<TextLiteral>(token);
+                    break;
+                case NONE:
+                    token = make_shared<NullToken>(0);
+                    arg = make_shared<NullLiteral>(token);
                     break;
                 default:
                     break;

@@ -6,6 +6,7 @@
 #define HELLOANDROID_STATEMENT_H
 
 #include "AstTree.h"
+#include "Literal.h"
 
 namespace bridge {
     class EmptyStatement : public AstTree {
@@ -133,8 +134,21 @@ namespace bridge {
         bool is_condition_true(EnvironmentPtr &env) {
             bool ret = false;
             BridgeValue value = _condition->evaluate(env);
-            if (value._type == STRING) {
-                ret = !value._string.empty();
+            switch (value._type) {
+                case INT:
+                    ret = value._int != 0;
+                    break;
+                case FLOAT:
+                    ret = value._float > 0.000001f || value._float < -0.000001f;
+                    break;
+                case BOOL:
+                    ret = value._bool;
+                    break;
+                case STRING:
+                    ret = !value._string.empty();
+                    break;
+                default:
+                    break;
             }
 
             return ret;
