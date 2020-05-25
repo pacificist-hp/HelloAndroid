@@ -94,7 +94,7 @@ namespace bridge {
                 } else if (*token == "export") {
 
                 } else if (*token == "!" || *token == "-" || *token == "++" || *token == "--") {
-
+                    ptr = parse_unary_expression(token);
                 } else if (*token == "if") {
                     ptr = parse_if();
                 } else if (*token == "for") {
@@ -154,7 +154,7 @@ namespace bridge {
                  op == nullptr ? "null" : op->description().c_str(),
                  right == nullptr ? "null" : right->description().c_str());
 
-            return make_shared<BinaryExpression>(left, op, right);
+            return make_shared<Expression>(left, op, right);
         }
 
         AstTreePtr parse_bracket() throw(BridgeException) {
@@ -205,6 +205,16 @@ namespace bridge {
             AstTreePtr var = make_shared<VarStatement>(var_literal, value);
             LOGD("Parser::parse_var: %s", var == nullptr ? "null" : var->description().c_str());
             return var;
+        }
+
+        AstTreePtr parse_unary_expression(StringPtr token) throw(BridgeException) {
+            AstLeafPtr op = make_shared<AstLeaf>(_lexer->read());
+            AstTreePtr variable = factor();
+
+            AstTreePtr unary = make_shared<UnaryExpression>(op, variable);
+            LOGD("Parser::parse_unary_expression: %s",
+                 unary == nullptr ? "null" : unary->description().c_str());
+            return unary;
         }
 
         AstTreePtr parse_if() throw(BridgeException) {

@@ -162,6 +162,8 @@ namespace bridge {
         AstTreePtr _condition;
     };
 
+    typedef shared_ptr<ConditionStatement> ConditionStatementPtr;
+
     class IfStatement : public ConditionStatement {
     public:
         IfStatement(AstTreePtr condition, AstTreePtr then_block, AstTreePtr else_block)

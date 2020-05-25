@@ -174,7 +174,7 @@ namespace bridge {
             }
 
             if (is_digit(chr)) {
-
+                return get_number_token(chr);
             }
 
             if (is_letter(chr) || chr->_c == '_') {
@@ -183,7 +183,7 @@ namespace bridge {
 
             if (chr->_c == '=' || chr->_c == '<' || chr->_c == '>' || chr->_c == '!' ||
                 chr->_c == '+' || chr->_c == '-' || chr->_c == '*' || chr->_c == '/') {
-
+                return get_math_op_token(chr);
             }
 
             if (chr->_c == '&') {
@@ -218,6 +218,22 @@ namespace bridge {
             }
         }
 
+        TokenPtr get_number_token(CharPtr chr) {
+            StringPtr word = make_shared<string>();
+            while (is_digit(chr)) {
+                *word += chr->_c;
+                chr = get_char();
+            }
+
+            if (chr != nullptr && chr->_c == '.') {
+
+            } else {
+                reverse_char(chr);
+            }
+
+            return (*word).empty() ? nullptr : make_shared<IntToken>(atoi(word->c_str()), chr->_line);
+        }
+
         TokenPtr get_identifier_token(CharPtr chr) {
             TokenPtr token = nullptr;
             StringPtr word = make_shared<string>();
@@ -240,6 +256,44 @@ namespace bridge {
             reverse_char(chr);
 
             return token;
+        }
+
+        TokenPtr get_math_op_token(CharPtr chr) {
+            if (chr == nullptr) {
+                return nullptr;
+            }
+
+            StringPtr word = make_shared<string>();
+            if (chr->_c == '/') {
+
+            } else if (chr->_c == '+') {
+                CharPtr next = get_char();
+                if (next != nullptr && next->_c == '+') {
+                    *word = "++";
+                    return make_shared<IdentifierToken>(word, chr->_line);
+                } else {
+                    reverse_char(next);
+                }
+            } else if (chr->_c == '-') {
+                CharPtr next = get_char();
+                if (next != nullptr && next->_c == '-') {
+                    *word = "--";
+                    return make_shared<IdentifierToken>(word, chr->_line);
+                } else {
+                    reverse_char(next);
+                }
+            }
+
+            *word += chr->_c;
+
+            CharPtr next = get_char();
+            if (next != nullptr && next->_c == '=') {
+                *word += '=';
+            } else {
+                reverse_char(next);
+            }
+
+            return make_shared<IdentifierToken>(word, chr->_line);
         }
 
         TokenPtr get_text_token(CharPtr chr) {
@@ -281,15 +335,16 @@ namespace bridge {
         }
 
         bool is_space(CharPtr chr) {
-            return chr != nullptr && (chr->_c >= 0 && chr->_c <= ' ');
+            return chr != nullptr && chr->_c >= 0 && chr->_c <= ' ';
         }
 
         bool is_digit(CharPtr chr) {
-            return chr->_c >= '0' && chr->_c <= '9';
+            return chr != nullptr && chr->_c >= '0' && chr->_c <= '9';
         }
 
         bool is_letter(CharPtr chr) {
-            return (chr->_c >= 'a' && chr->_c <= 'z') || (chr->_c >= 'A' && chr->_c <= 'Z');
+            return chr != nullptr && ((chr->_c >= 'a' && chr->_c <= 'z') ||
+                   (chr->_c >= 'A' && chr->_c <= 'Z'));
         }
 
     private:

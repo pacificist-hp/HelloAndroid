@@ -1,8 +1,10 @@
 function log_func(isDefault, msg) {
+    var time = 3;
     if (isDefault) {
         var def = "hello default";
-        log(def);
+        log(def, time);
     } else {
-        log(msg);
+        ++time;
+        log(msg, time);
     }
 }
