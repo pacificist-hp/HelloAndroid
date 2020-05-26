@@ -1,8 +1,8 @@
 function log_func(msg) {
     var time = 3;
-    while (time) {
+    do {
         log(msg, time);
         --time;
-    }
+    } while(time);
 
 }

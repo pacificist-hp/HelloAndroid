@@ -230,6 +230,36 @@ namespace bridge {
     protected:
         AstTreePtr _block;
     };
+
+    class DoWhileStatement : public ConditionStatement {
+    public:
+        DoWhileStatement(AstTreePtr condition, AstTreePtr block) : ConditionStatement(condition) {
+            _block = block;
+        }
+
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
+            BridgeValue value;
+
+            do {
+                value = _block->evaluate(env);
+            } while (is_condition_true(env));
+
+            return value;
+        }
+
+        virtual string description() {
+            string desc = "do(";
+            desc += _block->description();
+            desc += ") while(";
+            desc += _condition->description();
+            desc += ")";
+
+            return desc;
+        }
+
+    protected:
+        AstTreePtr _block;
+    };
 }
 
 #endif //HELLOANDROID_STATEMENT_H

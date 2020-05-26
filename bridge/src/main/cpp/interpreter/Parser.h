@@ -102,7 +102,7 @@ namespace bridge {
                 } else if (*token == "while") {
                     ptr = parse_while();
                 } else if (*token == "do") {
-
+                    ptr = parse_do_while();
                 } else if (*token == "switch") {
 
                 } else if (*token == "function") {
@@ -246,6 +246,18 @@ namespace bridge {
 
             AstTreePtr ret = make_shared<WhileStatement>(condition, block);
             LOGD("Parser::parse_while: %s", ret == nullptr ? "null" : ret->description().c_str());
+            return ret;
+        }
+
+        AstTreePtr parse_do_while() throw(BridgeException) {
+            discard_token("do");
+            AstTreePtr block = parse_block();
+
+            discard_token("while");
+            AstTreePtr condition = factor();
+
+            AstTreePtr ret = make_shared<DoWhileStatement>(condition, block);
+            LOGD("Parser::parse_do_while: %s", ret == nullptr ? "null" : ret->description().c_str());
             return ret;
         }
 

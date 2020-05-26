@@ -244,11 +244,11 @@ namespace bridge {
             } while (is_letter(chr) || chr->_c == '_' || is_digit(chr));
 
             if (*word == "true") {
-
+                token = make_shared<BoolToken>(true, chr->_line);
             } else if (*word == "false") {
-
+                token = make_shared<BoolToken>(false, chr->_line);
             } else if (*word == "null") {
-
+                token = make_shared<NullToken>(chr->_line);
             } else {
                 token = make_shared<IdentifierToken>(word, chr->_line);
             }
