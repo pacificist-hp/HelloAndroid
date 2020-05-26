@@ -201,6 +201,35 @@ namespace bridge {
         AstTreePtr _then_block;
         AstTreePtr _else_block;
     };
+
+    class WhileStatement : public ConditionStatement {
+    public:
+        WhileStatement(AstTreePtr condition, AstTreePtr block) : ConditionStatement(condition) {
+            _block = block;
+        }
+
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
+            BridgeValue value;
+
+            while (is_condition_true(env)) {
+                value = _block->evaluate(env);
+            }
+
+            return value;
+        }
+
+        virtual string description() {
+            string desc = "while(";
+            desc += _condition->description();
+            desc += ") ";
+            desc += _block->description();
+
+            return desc;
+        }
+
+    protected:
+        AstTreePtr _block;
+    };
 }
 
 #endif //HELLOANDROID_STATEMENT_H
