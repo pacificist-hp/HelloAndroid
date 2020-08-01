@@ -109,12 +109,181 @@ namespace bridge {
             _right = right;
         }
 
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
+            if (_op == nullptr || _op->get_token() == nullptr) {
+                throw BridgeException("Expression error: op is null");
+            }
+
+            StringPtr op = _op->get_token()->get_identifier();
+
+            BridgeValue right_value = _right->evaluate(env);
+            if (*op == "=") {
+                auto left_var = dynamic_pointer_cast<VarLiteral>(_left);
+                if (left_var != nullptr) {
+                    left_var->assign(env, right_value);
+                    return right_value;
+                } else {
+                    throw BridgeException("Expression error: only var can be assigned");
+                }
+            }
+
+            BridgeValue left_value = _left->evaluate(env);
+            if (*op == "+") {
+                op_add(left_value, right_value);
+            } else if (*op == "-") {
+                op_sub(left_value, right_value);
+            } else if (*op == "*") {
+                op_mul(left_value, right_value);
+            } else if (*op == "/") {
+                op_div(left_value, right_value);
+            } else {
+                string msg = "illegal operator: " + left_value.to_string() + " " + *op + " " + right_value.to_string();
+                throw BridgeException(msg);
+            }
+
+            return left_value;
+        }
+
         virtual string description() {
             string desc = "(";
             desc += _left->description();
             desc += _op->description();
             desc += _right->description();
             return desc;
+        }
+
+    private:
+        void op_add(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            if (left._type == INT) {
+                switch (right._type) {
+                    case INT:
+                        left._int += right._int;
+                        break;
+                    case FLOAT:
+                        left._float = left._int + right._float;
+                        left._type = FLOAT;
+                        break;
+                    default:
+                        left._string = left.to_string() + right.to_string();
+                        left._type = STRING;
+                        break;
+                }
+            } else if (left._type == FLOAT) {
+                switch (right._type) {
+                    case INT:
+                        left._float += right._int;
+                        break;
+                    case FLOAT:
+                        left._float += right._float;
+                        break;
+                    default:
+                        left._string = left.to_string() + right.to_string();
+                        left._type = STRING;
+                        break;
+                }
+            } else {
+                left._string = left.to_string() + right.to_string();
+                left._type = STRING;
+            }
+        }
+
+        void op_sub(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            if (left._type == INT) {
+                switch (right._type) {
+                    case INT:
+                        left._int -= right._int;
+                        break;
+                    case FLOAT:
+                        left._float = left._int - right._float;
+                        left._type = FLOAT;
+                        break;
+                    default:
+                        throw BridgeException("Expression error: only INT/FLOAT support op '-'");
+                }
+            } else if (left._type == FLOAT) {
+                switch (right._type) {
+                    case INT:
+                        left._float += right._int;
+                        break;
+                    case FLOAT:
+                        left._float += right._float;
+                        break;
+                    default:
+                        throw BridgeException("Expression error: only INT/FLOAT support op '-'");
+                }
+            } else {
+                throw BridgeException("Expression error: only INT/FLOAT support op '-'");
+            }
+        }
+
+        void op_mul(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            if (left._type == INT) {
+                switch (right._type) {
+                    case INT:
+                        left._int *= right._int;
+                        break;
+                    case FLOAT:
+                        left._float = left._int * right._float;
+                        left._type = FLOAT;
+                        break;
+                    default:
+                        throw BridgeException("Expression error: only INT/FLOAT support op '*'");
+                }
+            } else if (left._type == FLOAT) {
+                switch (right._type) {
+                    case INT:
+                        left._float *= right._int;
+                        break;
+                    case FLOAT:
+                        left._float *= right._float;
+                        break;
+                    default:
+                        throw BridgeException("Expression error: only INT/FLOAT support op '*'");
+                }
+            } else {
+                throw BridgeException("Expression error: only INT/FLOAT support op '-'");
+            }
+        }
+
+        void op_div(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            if (left._type == INT) {
+                switch (right._type) {
+                    case INT:
+                        if (right._int == 0) {
+                            throw BridgeException("Expression error: divide by 0");
+                        }
+                        left._int /= right._int;
+                        break;
+                    case FLOAT:
+                        if (fabs(right._float) <= 0.0000001f) {
+                            throw BridgeException("Expression error: divide by 0");
+                        }
+                        left._float = left._int / right._float;
+                        left._type = FLOAT;
+                        break;
+                    default:
+                        throw BridgeException("Expression error: only INT/FLOAT support op '/'");
+                }
+            } else if (left._type == FLOAT) {
+                switch (right._type) {
+                    case INT:
+                        if (right._int == 0) {
+                            throw BridgeException("Expression error: divide by 0");
+                        }
+                        left._float /= right._int;
+                        break;
+                    case FLOAT:
+                        if (fabs(right._float) <= 0.0000001f) {
+                            throw BridgeException("Expression error: divide by 0");
+                        }
+                        left._float /= right._float;
+                        break;
+                    default:
+                        throw BridgeException("Expression error: only INT/FLOAT support op '*'");
+                }
+            } else {
+                throw BridgeException("Expression error: only INT/FLOAT support op '-'");
+            }
         }
 
     protected:

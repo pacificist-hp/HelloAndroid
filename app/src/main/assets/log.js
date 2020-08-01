@@ -1,8 +1,4 @@
-function log_func(msg) {
-    var time = 3;
-    do {
-        log(msg, time);
-        --time;
-    } while(time);
-
+function log_func(num) {
+    var time = num + 4;
+    log("expression: ", time);
 }

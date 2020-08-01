@@ -18,14 +18,17 @@
 
 namespace bridge {
 
+    // 运算符优先级
     struct Precedence {
-        Precedence(int val, bool left_assoc) {
-            _value = val;
-            _left_assoc = left_assoc;
+        Precedence(int level, bool left) {
+            _level = level;
+            _left_associative = left;
         }
 
-        int _value;
-        bool _left_assoc;
+        // 值越大，优先级越高
+        int _level;
+        // 运算符是否左结合
+        bool _left_associative;
     };
 
     typedef shared_ptr<Precedence> PrecedencePtr;
@@ -34,6 +37,27 @@ namespace bridge {
     public:
         Parser(LexerPtr lexer) {
             _lexer = lexer;
+
+            _operators["&&"] = make_shared<Precedence>(0, true);
+            _operators["||"] = make_shared<Precedence>(0, true);
+            _operators["="] = make_shared<Precedence>(0, true);
+            _operators["<"] = make_shared<Precedence>(1, true);
+            _operators[">"] = make_shared<Precedence>(1, true);
+            _operators["<="] = make_shared<Precedence>(1, true);
+            _operators[">="] = make_shared<Precedence>(1, true);
+            _operators["=="] = make_shared<Precedence>(1, true);
+            _operators["!="] = make_shared<Precedence>(1, true);
+            _operators["+="] = make_shared<Precedence>(1, true);
+            _operators["-="] = make_shared<Precedence>(1, true);
+            _operators["*="] = make_shared<Precedence>(1, true);
+            _operators["/="] = make_shared<Precedence>(1, true);
+            _operators["+"] = make_shared<Precedence>(2, true);
+            _operators["-"] = make_shared<Precedence>(2, true);
+            _operators["*"] = make_shared<Precedence>(3, true);
+            _operators["/"] = make_shared<Precedence>(3, true);
+            _operators["%"] = make_shared<Precedence>(3, true);
+            _operators["^"] = make_shared<Precedence>(4, true);
+            _operators["!"] = make_shared<Precedence>(4, true);
 
             _reserved.insert("{");
             _reserved.insert("}");
@@ -60,10 +84,10 @@ namespace bridge {
                 return nullptr;
             }
 
-            PrecedencePtr next_prec = nullptr;
+            PrecedencePtr precedence = nullptr;
 
-            while ((next_prec = next_op()) != nullptr) {
-                left = shift_factor(left, next_prec->_value);
+            while ((precedence = next_operator_precedence()) != nullptr) {
+                left = shift_factor(left, precedence->_level);
             }
 
             // try to parse ternary expression
@@ -127,7 +151,7 @@ namespace bridge {
             return ptr;
         }
 
-        AstTreePtr shift_factor(AstTreePtr left, int prec) throw(BridgeException) {
+        AstTreePtr shift_factor(AstTreePtr left, int level) throw(BridgeException) {
             AstLeafPtr op = make_shared<AstLeaf>(_lexer->read());
             AstTreePtr right = nullptr;
 
@@ -143,6 +167,12 @@ namespace bridge {
                 throw BridgeException(err);
             }
 
+            PrecedencePtr next_precedence = nullptr;
+            while ((next_precedence = next_operator_precedence()) != nullptr
+                    && check_expression(level, next_precedence)) {
+                right = shift_factor(right, next_precedence->_level);
+            }
+
             // ternary expression
             StringPtr str_op = op->try_get_identifier();
             if (op != nullptr) {
@@ -155,6 +185,11 @@ namespace bridge {
                  right == nullptr ? "null" : right->description().c_str());
 
             return make_shared<Expression>(left, op, right);
+        }
+
+        bool check_expression(int level, PrecedencePtr next_precedence) {
+            return next_precedence->_left_associative ?
+                level < next_precedence->_level : level <= next_precedence->_level;
         }
 
         AstTreePtr parse_bracket() throw(BridgeException) {
@@ -257,7 +292,8 @@ namespace bridge {
             AstTreePtr condition = factor();
 
             AstTreePtr ret = make_shared<DoWhileStatement>(condition, block);
-            LOGD("Parser::parse_do_while: %s", ret == nullptr ? "null" : ret->description().c_str());
+            LOGD("Parser::parse_do_while: %s",
+                 ret == nullptr ? "null" : ret->description().c_str());
             return ret;
         }
 
@@ -491,17 +527,17 @@ namespace bridge {
             return ret;
         }
 
-        PrecedencePtr next_op() throw(BridgeException) {
+        PrecedencePtr next_operator_precedence() throw(BridgeException) {
             TokenPtr t = _lexer->peek(0);
             if (t != nullptr && t->get_type() == TYPE_IDENTIFIER) {
                 auto it = _operators.find(*(t->get_identifier()));
                 if (it != _operators.end()) {
-                    LOGD("Parser::next_op: %s", t->description().c_str());
+                    LOGD("Parser::next_operator_precedence: %s", t->description().c_str());
                     return it->second;
                 }
             }
 
-            LOGD("Parser::next_op: null");
+            LOGD("Parser::next_operator_precedence: null");
             return nullptr;
         }
 
