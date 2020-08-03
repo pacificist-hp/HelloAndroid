@@ -101,9 +101,9 @@ namespace bridge {
 
 
     // 二元表达式
-    class Expression : public AstTree {
+    class BinaryExpression : public AstTree {
     public:
-        Expression(AstTreePtr left, AstLeafPtr op, AstTreePtr right) {
+        BinaryExpression(AstTreePtr left, AstLeafPtr op, AstTreePtr right) {
             _left = left;
             _op = op;
             _right = right;

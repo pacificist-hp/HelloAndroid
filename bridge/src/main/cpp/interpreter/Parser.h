@@ -184,7 +184,7 @@ namespace bridge {
                  op == nullptr ? "null" : op->description().c_str(),
                  right == nullptr ? "null" : right->description().c_str());
 
-            return make_shared<Expression>(left, op, right);
+            return make_shared<BinaryExpression>(left, op, right);
         }
 
         bool check_expression(int level, PrecedencePtr next_precedence) {
