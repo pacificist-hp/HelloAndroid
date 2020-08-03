@@ -136,6 +136,16 @@ namespace bridge {
                 op_mul(left_value, right_value);
             } else if (*op == "/") {
                 op_div(left_value, right_value);
+            } else if (*op == "+=") {
+                op_add_assign(env, left_value, right_value);
+            } else if (*op == "-=") {
+                op_sub_assign(env, left_value, right_value);
+            } else if (*op == "*=") {
+                op_mul_assign(env, left_value, right_value);
+            } else if (*op == "/=") {
+                op_div_assign(env, left_value, right_value);
+            } else if (*op == "%") {
+                op_remainder(left_value, right_value);
             } else {
                 string msg = "illegal operator: " + left_value.to_string() + " " + *op + " " + right_value.to_string();
                 throw BridgeException(msg);
@@ -283,6 +293,55 @@ namespace bridge {
                 }
             } else {
                 throw BridgeException("Expression error: only INT/FLOAT support op '-'");
+            }
+        }
+
+        void op_add_assign(EnvironmentPtr &env, BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            op_add(left, right);
+            auto left_var = dynamic_pointer_cast<VarLiteral>(_left);
+            if (left_var != nullptr) {
+                left_var->assign(env, left);
+            } else {
+                throw BridgeException("Expression error: only var support op '+='");
+            }
+        }
+
+        void op_sub_assign(EnvironmentPtr &env, BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            op_sub(left, right);
+            auto left_var = dynamic_pointer_cast<VarLiteral>(_left);
+            if (left_var != nullptr) {
+                left_var->assign(env, left);
+            } else {
+                throw BridgeException("Expression error: only var support op '-='");
+            }
+        }
+
+        void op_mul_assign(EnvironmentPtr &env, BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            op_mul(left, right);
+            auto left_var = dynamic_pointer_cast<VarLiteral>(_left);
+            if (left_var != nullptr) {
+                left_var->assign(env, left);
+            } else {
+                throw BridgeException("Expression error: only var support op '*='");
+            }
+        }
+
+        void op_div_assign(EnvironmentPtr &env, BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            op_div(left, right);
+            auto left_var = dynamic_pointer_cast<VarLiteral>(_left);
+            if (left_var != nullptr) {
+                left_var->assign(env, left);
+            } else {
+                throw BridgeException("Expression error: only var support op '/='");
+            }
+        }
+
+        void op_remainder(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            if (left._type == INT && right._type == INT) {
+                left._int %= right._int;
+            } else {
+                string msg = "Expression error: " + left.to_string() + " % " + right.to_string();
+                throw BridgeException(msg);
             }
         }
 
