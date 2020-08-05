@@ -220,18 +220,44 @@ namespace bridge {
 
         TokenPtr get_number_token(CharPtr chr) {
             StringPtr word = make_shared<string>();
-            while (is_digit(chr)) {
+            do {
                 *word += chr->_c;
                 chr = get_char();
-            }
+            } while (is_digit(chr));
 
             if (chr != nullptr && chr->_c == '.') {
+                CharPtr c2 = get_char();
+                if (is_digit(c2)) {
+                    string decimal;
+                    do {
+                        decimal += c2->_c;
+                        c2 = get_char();
+                    } while (is_digit(c2));
+
+                    if (c2->_c != '.') {
+                        *word += '.';
+                        *word += decimal;
+
+                        reverse_char(c2);
+                        return make_shared<FloatToken>(atof(word->c_str()), chr->_line);
+                    } else {
+                        reverse_char(c2);
+                        for (int i = decimal.size() - 1; i >= 0; i--) {
+                            reverse_char(make_shared<Character>(decimal[i], 0));
+                        }
+
+                        reverse_char(chr);
+                    }
+                } else {
+                    reverse_char(c2);
+                    reverse_char(chr);
+                }
 
             } else {
                 reverse_char(chr);
             }
 
-            return (*word).empty() ? nullptr : make_shared<IntToken>(atoi(word->c_str()), chr->_line);
+            return (*word).empty() ? nullptr : make_shared<IntToken>(atoll(word->c_str()), chr->_line);
         }
 
         TokenPtr get_identifier_token(CharPtr chr) {
