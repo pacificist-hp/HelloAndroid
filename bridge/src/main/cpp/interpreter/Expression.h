@@ -146,6 +146,24 @@ namespace bridge {
                 op_div_assign(env, left_value, right_value);
             } else if (*op == "%") {
                 op_remainder(left_value, right_value);
+            } else if (*op == "^") {
+                op_xor(left_value, right_value);
+            } else if (*op == "!=") {
+                op_not_euqal(left_value, right_value);
+            } else if (*op == "==") {
+                op_euqal(left_value, right_value);
+            } else if (*op == "&&") {
+                op_and(left_value, right_value);
+            } else if (*op == "||") {
+                op_or(left_value, right_value);
+            } else if (*op == ">") {
+                op_bigger_than(left_value, right_value);
+            } else if (*op == "<") {
+                op_less_than(left_value, right_value);
+            } else if (*op == ">=") {
+                op_bigger_equal(left_value, right_value);
+            } else if (*op == "<=") {
+                op_less_equal(left_value, right_value);
             } else {
                 string msg = "illegal operator: " + left_value.to_string() + " " + *op + " " + right_value.to_string();
                 throw BridgeException(msg);
@@ -343,6 +361,235 @@ namespace bridge {
                 string msg = "Expression error: " + left.to_string() + " % " + right.to_string();
                 throw BridgeException(msg);
             }
+        }
+
+        void op_xor(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            if (left._type == INT && right._type == INT) {
+                left._int ^= right._int;
+            } else {
+                string msg = "Expression error: " + left.to_string() + " ^ " + right.to_string();
+                throw BridgeException(msg);
+            }
+        }
+
+        void op_not_euqal(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            left._bool = left.to_string() != right.to_string();
+            left._bool = BOOL;
+        }
+
+        void op_euqal(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            left._bool = left.to_string() == right.to_string();
+            left._bool = BOOL;
+        }
+
+        void op_and(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            if (left._type == BOOL && right._type == BOOL) {
+                left._bool = left._bool && right._bool;
+            } else {
+                string msg = "Expression error: " + left.to_string() + " && " + right.to_string();
+                throw BridgeException(msg);
+            }
+        }
+
+        void op_or(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            if (left._type == BOOL && right._type == BOOL) {
+                left._bool = left._bool || right._bool;
+            } else {
+                string msg = "Expression error: " + left.to_string() + " || " + right.to_string();
+                throw BridgeException(msg);
+            }
+        }
+
+        void op_bigger_than(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            bool b;
+            switch (left._type) {
+                case INT:
+                    if (right._type == INT) {
+                        b = left._int > right._int;
+                    } else if (right._type == FLOAT) {
+                        b = left._int > right._float;
+                    } else if (right._type == NONE) {
+                        b = left._int > 0;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " > " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                case FLOAT:
+                    if (right._type == INT) {
+                        b = left._float > right._int;
+                    } else if (right._type == FLOAT) {
+                        b = left._float > right._float;
+                    } else if (right._type == NONE) {
+                        b = left._float > 0;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " > " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                case NONE:
+                    if (right._type == INT) {
+                        b = 0 > right._int;
+                    } else if (right._type == FLOAT) {
+                        b = 0 > right._float;
+                    } else if (right._type == NONE) {
+                        b = false;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " > " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                default:
+                    string msg = "Expression error: " + left.to_string() + " > " + right.to_string();
+                    throw BridgeException(msg);
+            }
+
+            left._type = BOOL;
+            left._bool = b;
+        }
+
+        void op_less_than(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            bool b;
+            switch (left._type) {
+                case INT:
+                    if (right._type == INT) {
+                        b = left._int < right._int;
+                    } else if (right._type == FLOAT) {
+                        b = left._int < right._float;
+                    } else if (right._type == NONE) {
+                        b = left._int < 0;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " < " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                case FLOAT:
+                    if (right._type == INT) {
+                        b = left._float < right._int;
+                    } else if (right._type == FLOAT) {
+                        b = left._float < right._float;
+                    } else if (right._type == NONE) {
+                        b = left._float < 0;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " < " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                case NONE:
+                    if (right._type == INT) {
+                        b = 0 < right._int;
+                    } else if (right._type == FLOAT) {
+                        b = 0 < right._float;
+                    } else if (right._type == NONE) {
+                        b = false;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " < " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                default:
+                    string msg = "Expression error: " + left.to_string() + " < " + right.to_string();
+                    throw BridgeException(msg);
+            }
+
+            left._type = BOOL;
+            left._bool = b;
+        }
+
+        void op_bigger_equal(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            bool b;
+            switch (left._type) {
+                case INT:
+                    if (right._type == INT) {
+                        b = left._int >= right._int;
+                    } else if (right._type == FLOAT) {
+                        b = left._int >= right._float;
+                    } else if (right._type == NONE) {
+                        b = left._int >= 0;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " >= " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                case FLOAT:
+                    if (right._type == INT) {
+                        b = left._float >= right._int;
+                    } else if (right._type == FLOAT) {
+                        b = left._float >= right._float;
+                    } else if (right._type == NONE) {
+                        b = left._float >= 0;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " >= " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                case NONE:
+                    if (right._type == INT) {
+                        b = 0 >= right._int;
+                    } else if (right._type == FLOAT) {
+                        b = 0 >= right._float;
+                    } else if (right._type == NONE) {
+                        b = false;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " >= " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                default:
+                    string msg = "Expression error: " + left.to_string() + " >= " + right.to_string();
+                    throw BridgeException(msg);
+            }
+
+            left._type = BOOL;
+            left._bool = b;
+        }
+
+        void op_less_equal(BridgeValue &left, BridgeValue &right) throw(BridgeException) {
+            bool b;
+            switch (left._type) {
+                case INT:
+                    if (right._type == INT) {
+                        b = left._int <= right._int;
+                    } else if (right._type == FLOAT) {
+                        b = left._int <= right._float;
+                    } else if (right._type == NONE) {
+                        b = left._int <= 0;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " <= " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                case FLOAT:
+                    if (right._type == INT) {
+                        b = left._float <= right._int;
+                    } else if (right._type == FLOAT) {
+                        b = left._float <= right._float;
+                    } else if (right._type == NONE) {
+                        b = left._float <= 0;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " <= " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                case NONE:
+                    if (right._type == INT) {
+                        b = 0 <= right._int;
+                    } else if (right._type == FLOAT) {
+                        b = 0 <= right._float;
+                    } else if (right._type == NONE) {
+                        b = false;
+                    } else {
+                        string msg = "Expression error: " + left.to_string() + " <= " + right.to_string();
+                        throw BridgeException(msg);
+                    }
+                    break;
+                default:
+                    string msg = "Expression error: " + left.to_string() + " <= " + right.to_string();
+                    throw BridgeException(msg);
+            }
+
+            left._type = BOOL;
+            left._bool = b;
         }
 
     protected:

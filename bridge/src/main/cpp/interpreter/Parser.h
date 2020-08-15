@@ -68,6 +68,15 @@ namespace bridge {
             _reserved.insert(";");
             _reserved.insert("function");
             _reserved.insert("var");
+
+            _op_bool.insert("&&");
+            _op_bool.insert("||");
+            _op_bool.insert(">");
+            _op_bool.insert("<");
+            _op_bool.insert("==");
+            _op_bool.insert(">=");
+            _op_bool.insert("<=");
+            _op_bool.insert("!=");
         }
 
     public:
@@ -561,7 +570,8 @@ namespace bridge {
     private:
         LexerPtr _lexer;
         unordered_map<string, PrecedencePtr> _operators;
-        unordered_set <string> _reserved;
+        unordered_set<string> _reserved;
+        unordered_set<string> _op_bool;
 
         // 保存已注册或定义好的函数
         unordered_map<string, FuncPtr> _map_func_def;
