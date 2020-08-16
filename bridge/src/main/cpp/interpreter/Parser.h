@@ -553,7 +553,10 @@ namespace bridge {
         void discard_token(string name) {
             TokenPtr token = _lexer->read();
             if (token == nullptr || token->get_text() == nullptr || *(token->get_text()) != name) {
-                throw BridgeException("discard token error");
+                string msg = "discard token \"";
+                msg += name;
+                msg += "\" error";
+                throw BridgeException(msg);
             }
         }
 

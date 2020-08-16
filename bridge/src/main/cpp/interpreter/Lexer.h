@@ -187,11 +187,11 @@ namespace bridge {
             }
 
             if (chr->_c == '&') {
-
+                return get_logic_and_op_token(chr);
             }
 
             if (chr->_c == '|') {
-
+                return get_logic_or_op_token(chr);
             }
 
             if (chr->_c == '\"') {
@@ -285,13 +285,29 @@ namespace bridge {
         }
 
         TokenPtr get_math_op_token(CharPtr chr) {
-            if (chr == nullptr) {
-                return nullptr;
-            }
-
             StringPtr word = make_shared<string>();
             if (chr->_c == '/') {
+                CharPtr c2 = get_char();
+                if (c2 != nullptr && c2->_c == '/') {
+                    // 单行注释
+                    do {
+                        c2 = get_char();
+                    } while (c2 != nullptr && c2->_c != '\n');
 
+                    return read_token_word();
+                } else if (c2 != nullptr && c2->_c == '*') {
+                    // 范围注释
+                    c2 = get_char();
+                    CharPtr c3 = get_char();
+                    while (c2 != nullptr && c3 != nullptr && !(c2->_c == '*' && c3->_c == '/')) {
+                        c2 = c3;
+                        c3 = get_char();
+                    }
+
+                    return read_token_word();
+                } else {
+                    reverse_char(c2);
+                }
             } else if (chr->_c == '+') {
                 CharPtr next = get_char();
                 if (next != nullptr && next->_c == '+') {
@@ -322,12 +338,40 @@ namespace bridge {
             return make_shared<IdentifierToken>(word, chr->_line);
         }
 
+        TokenPtr get_logic_and_op_token(CharPtr chr) {
+            StringPtr word = make_shared<string>();
+            *word += chr->_c;
+
+            CharPtr chr2 = get_char();
+            if (chr2 != nullptr && chr2->_c == '&') {
+                *word += '&';
+            } else {
+                throw BridgeException("bad identifier '&'");
+            }
+
+            return make_shared<IdentifierToken>(word, chr->_line);
+        }
+
+        TokenPtr get_logic_or_op_token(CharPtr chr) {
+            StringPtr word = make_shared<string>();
+            *word += chr->_c;
+
+            CharPtr chr2 = get_char();
+            if (chr2 != nullptr && chr2->_c == '|') {
+                *word += '|';
+            } else {
+                throw BridgeException("bad identifier '|'");
+            }
+
+            return make_shared<IdentifierToken>(word, chr->_line);
+        }
+
         TokenPtr get_text_token(CharPtr chr) {
             StringPtr word = make_shared<string>();
             while (true) {
                 chr = get_char();
                 if (chr->_c == '\n') {
-                    throw BridgeException("string has no end identifier");
+                    throw BridgeException("string has no end identifier \"");
                 }
 
                 if (chr == nullptr || chr->_c == '\"') {
