@@ -112,6 +112,18 @@ namespace bridge {
         }
     };
 
+    struct FlowException {
+        FlowException() {
+
+        }
+
+        FlowException(BridgeValue value) {
+            _value = value;
+        }
+
+        BridgeValue _value;
+    };
+
     typedef BridgeValue (*OUTER_FUNC_CALLBACK)(const char *name, BridgeValue *params,
                                                int param_num);
 

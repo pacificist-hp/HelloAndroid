@@ -131,7 +131,7 @@ namespace bridge {
                 } else if (*token == "if") {
                     ptr = parse_if();
                 } else if (*token == "for") {
-
+                    ptr = parse_for();
                 } else if (*token == "while") {
                     ptr = parse_while();
                 } else if (*token == "do") {
@@ -282,6 +282,21 @@ namespace bridge {
             return ret;
         }
 
+        AstTreePtr parse_for() throw(BridgeException) {
+            discard_token("for");
+            discard_token("(");
+
+            AstTreePtr init = expression();
+            AstTreePtr condition = expression();
+            AstTreePtr next = expression();
+
+            discard_token(")");
+
+            AstTreePtr block = parse_block();
+
+            return make_shared<ForStatement>(init, condition, next, block);
+        }
+
         AstTreePtr parse_while() throw(BridgeException) {
             discard_token("while");
 
@@ -390,10 +405,9 @@ namespace bridge {
                 if (next_token != nullptr) {
                     if (*next_token == "(") {
                         ret = parse_call(ptr);
-                    } else if (*next_token == "." || *next_token == "[") {
-
                     } else if (*next_token == "++" || *next_token == "--") {
-
+                        AstLeafPtr op = make_shared<AstLeaf>(_lexer->read());
+                        return make_shared<UnaryExpression>(op, ptr, false);
                     }
                 }
 

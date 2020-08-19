@@ -260,6 +260,54 @@ namespace bridge {
     protected:
         AstTreePtr _block;
     };
+
+    class ForStatement: public ConditionStatement {
+    public:
+        ForStatement(AstTreePtr init, AstTreePtr condition, AstTreePtr next, AstTreePtr block): ConditionStatement(condition) {
+            _init = init;
+            _next = next;
+            _block = block;
+        }
+
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
+            BridgeValue value;
+
+            EnvironmentPtr inner_env = make_shared<Environment>(env);
+            _init->evaluate(inner_env);
+
+            while (is_condition_true(inner_env)) {
+                try {
+                    value = _block->evaluate(inner_env);
+                } catch (FlowException e) {
+                    if (e._value.to_string() == "break") {
+                        break;
+                    }
+                }
+
+                _next->evaluate(inner_env);
+            }
+
+            return value;
+        }
+
+        virtual string description() {
+            string desc = "for(";
+            desc += _init->description();
+            desc += "; ";
+            desc += _condition->description();
+            desc += "; ";
+            desc += _next->description();
+            desc += ") ";
+            desc += _block->description();
+
+            return desc;
+        }
+
+    private:
+        AstTreePtr _init;
+        AstTreePtr _next;
+        AstTreePtr _block;
+    };
 }
 
 #endif //HELLOANDROID_STATEMENT_H

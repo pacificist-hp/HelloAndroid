@@ -10,10 +10,25 @@
 #include "../include/common.h"
 
 namespace bridge {
+    class Environment;
+    typedef shared_ptr<Environment> EnvironmentPtr;
+
     class Environment {
     public:
         Environment(int bridge_id) {
             _bridge_id = bridge_id;
+            s_count++;
+        }
+
+        Environment(Environment &env) {
+            _bridge_id = env._bridge_id;
+            env.copy_to_map(&_map_val);
+            s_count++;
+        }
+
+        Environment(EnvironmentPtr &env) {
+            _bridge_id = env->_bridge_id;
+            _outer_env = env;
             s_count++;
         }
 
@@ -31,7 +46,7 @@ namespace bridge {
                 return;
             }
 
-            shared_ptr<Environment> env = _outer_env.lock();
+            EnvironmentPtr env = _outer_env.lock();
             while (env != nullptr) {
                 if (env->exist(name)) {
                     env->put(name, v);
@@ -52,13 +67,33 @@ namespace bridge {
         BridgeValue get(string &name) throw(BridgeException) {
             auto it = _map_val.find(name);
             if (it == _map_val.end()) {
-                throw BridgeException(name + " is not in environment");
+                EnvironmentPtr env = _outer_env.lock();
+                if (env == nullptr) {
+                    throw BridgeException(name + " is not in environment");
+                } else {
+                    return env->get(name);
+                }
+            } else {
+                return it->second;
             }
-            return it->second;
         }
 
-        int get_bridge_id() {
-            return _bridge_id;
+        void copy_to_map(unordered_map<string, BridgeValue> *desc) {
+            if (desc == NULL) {
+                return;
+            }
+
+            for(auto it = _map_val.begin(); it != _map_val.end(); it++) {
+                if (desc->find(it->first) == desc->end()) {
+                    (*desc)[it->first] = it->second;
+                }
+            }
+
+            shared_ptr<Environment> outer = _outer_env.lock();
+            // 不需要copy全局变量
+            if (outer != nullptr && (outer->_outer_env).lock() != nullptr) {
+                outer->copy_to_map(desc);
+            }
         }
 
     private:
@@ -67,7 +102,7 @@ namespace bridge {
         }
 
     private:
-        unordered_map <string, BridgeValue> _map_val;
+        unordered_map<string, BridgeValue> _map_val;
         weak_ptr<Environment> _outer_env;
 
         int _bridge_id;
@@ -75,7 +110,6 @@ namespace bridge {
         static int s_count;
     };
 
-    typedef shared_ptr<Environment> EnvironmentPtr;
 }
 
 #endif //HELLOANDROID_ENVIRONMENT_H

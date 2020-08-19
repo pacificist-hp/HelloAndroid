@@ -177,6 +177,7 @@ namespace bridge {
             desc += _left->description();
             desc += _op->description();
             desc += _right->description();
+            desc += ")";
             return desc;
         }
 
