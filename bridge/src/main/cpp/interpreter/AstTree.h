@@ -12,7 +12,7 @@ namespace bridge {
 
     class AstTree {
     public:
-        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException, FlowException) {
             throw BridgeException("AstTree cannot evaluate");
         }
 
@@ -69,7 +69,7 @@ namespace bridge {
             throw BridgeException("AstList::child error");
         }
 
-        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException, FlowException) {
             BridgeValue v;
             for (auto it = _children->begin(); it != _children->end(); it++) {
                 v = (*it)->evaluate(env);

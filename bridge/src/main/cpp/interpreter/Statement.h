@@ -308,6 +308,35 @@ namespace bridge {
         AstTreePtr _next;
         AstTreePtr _block;
     };
+
+    class ReturnStatement: public AstTree {
+    public:
+        ReturnStatement(AstTreePtr expression) {
+            _expression = expression;
+        }
+
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException, FlowException) {
+            if (_expression != nullptr) {
+                throw FlowException(_expression->evaluate(env));
+            } else {
+                throw FlowException(BridgeValue());
+            }
+        }
+
+        virtual string description() {
+            string desc = "return ";
+            if (_expression == nullptr) {
+                desc += ";";
+            } else {
+                desc += _expression->description();
+            }
+
+            return desc;
+        }
+
+    private:
+        AstTreePtr _expression;
+    };
 }
 
 #endif //HELLOANDROID_STATEMENT_H

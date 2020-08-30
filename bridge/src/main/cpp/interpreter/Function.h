@@ -120,10 +120,14 @@ namespace bridge {
             return _param_list->param_name_list();
         }
 
-        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException) {
+        virtual BridgeValue evaluate(EnvironmentPtr &env) throw(BridgeException, FlowException) {
             LOGD("Function::evaluate: this=%s,%s", description().c_str(),
                  _block->description().c_str());
-            return _block->evaluate(env);
+            try {
+                return _block->evaluate(env);
+            } catch (FlowException &e) {
+                return BridgeValue(e._value);
+            }
         }
 
         virtual string description() {

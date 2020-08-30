@@ -141,7 +141,7 @@ namespace bridge {
                 } else if (*token == "function") {
                     ptr = parse_function();
                 } else if (*token == "return") {
-
+                    ptr = parse_return();
                 } else if (*token == "break") {
 
                 } else if (*token == "continue") {
@@ -358,6 +358,19 @@ namespace bridge {
             LOGD("Parser::parse_function: %s",
                  func == nullptr ? "null" : func->description().c_str());
             return func;
+        }
+
+        AstTreePtr parse_return() throw(BridgeException) {
+            discard_token("return");
+
+            AstTreePtr ptr = nullptr;
+            if (peek_next_token(";")) {
+                discard_token(";");
+            } else if (!peek_next_token("}")) {
+                ptr = expression();
+            }
+
+            return make_shared<ReturnStatement>(ptr);
         }
 
         AstTreePtr parse_literal() throw(BridgeException) {
