@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
             IBookManager bookManager = IBookManager.Stub.asInterface(service);
             try {
                 Log.d("BOOK_SERVICE", "Client: onServiceConnected");
+                // 客户端发起远程请求时，当前线程会被挂起直至服务端进程返回数据
                 List<Book> books = bookManager.getBookList();
                 Log.d("BOOK_SERVICE", "Client: " + books.toString());
             } catch (RemoteException e) {

@@ -18,6 +18,7 @@ public class BookManagerService extends Service {
 
     private CopyOnWriteArrayList<Book> bookList = new CopyOnWriteArrayList<>();
 
+    // 由于服务端 Binder 方法运行在 Binder 线程池中，服务功能可以采用同步的方式实现
     private Binder binder = new IBookManager.Stub() {
         @Override
         public List<Book> getBookList() throws RemoteException {
