@@ -14,14 +14,32 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private IBookManager mBookManager = null;
+
+    private IBinder.DeathRecipient mDeathRecipient = new IBinder.DeathRecipient() {
+        @Override
+        public void binderDied() {
+            if (mBookManager == null) {
+                return;
+            }
+
+            mBookManager.asBinder().unlinkToDeath(this, 0);
+            mBookManager = null;
+        }
+    };
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            IBookManager bookManager = IBookManager.Stub.asInterface(service);
+            mBookManager = IBookManager.Stub.asInterface(service);
             try {
                 Log.d("BOOK_SERVICE", "Client: onServiceConnected");
+
+                service.linkToDeath(mDeathRecipient, 0);
+
                 // 客户端发起远程请求时，当前线程会被挂起直至服务端进程返回数据
-                List<Book> books = bookManager.getBookList();
+                List<Book> books = mBookManager.getBookList();
+
                 Log.d("BOOK_SERVICE", "Client: " + books.toString());
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -30,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-
+            mBookManager = null;
         }
     };
 
