@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
                 service.linkToDeath(mDeathRecipient, 0);
 
-                // 客户端发起远程请求时，当前线程会被挂起直至服务端进程返回数据
                 List<Book> books = mBookManager.getBookList();
 
                 Log.d("BOOK_SERVICE", "Client: " + books.toString());
