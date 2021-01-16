@@ -82,7 +82,7 @@ public class LayoutChangesActivity extends AppCompatActivity {
         leftViewParams.topMargin = 40;
         leftViewParams.leftMargin = 40;
 
-        rightViewParams = new FrameLayout.LayoutParams(300, 500);
+        rightViewParams = new FrameLayout.LayoutParams(300, 501);
         rightViewParams.gravity = Gravity.TOP | Gravity.RIGHT;
         rightViewParams.topMargin = 40;
         rightViewParams.rightMargin = 40;
