@@ -8,10 +8,13 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private static final Random sRandom = new Random();
 
     private FlowLayout mFlowView;
+
+    private Queue<View> mImpressionQueue = new LinkedList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_settings) {
+        if (item.getItemId() == R.id.menu_add) {
             final EditText inputServer = new EditText(this);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.title_new_impression)
@@ -48,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
                                     addImpression(inputServer.getText().toString());
                                 }
                             }).show();
+        } else if (item.getItemId() == R.id.menu_poll) {
+            pollImpression();
         }
         return true;
     }
@@ -66,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
         tv.setTextSize(TEXT_SIZE[sRandom.nextInt(TEXT_SIZE.length)]);
         tv.setBackgroundResource(R.drawable.bg_flag);
 
+        mImpressionQueue.add(tv);
         mFlowView.addView(tv);
+    }
+
+    private void pollImpression() {
+        View view = mImpressionQueue.poll();
+        if (view != null) {
+            mFlowView.removeView(view);
+        }
     }
 }

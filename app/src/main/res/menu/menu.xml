@@ -2,9 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/menu_settings"
+        android:id="@+id/menu_add"
         android:orderInCategory="100"
         android:title="@string/menu_add_impression"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_poll"
+        android:orderInCategory="100"
+        android:title="@string/menu_poll_impression"
         app:showAsAction="never" />
 
 </menu>
