@@ -28,7 +28,9 @@ public class LayoutChangesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_layout_changes);
 
         rootView = findViewById(R.id.root_view);
-        rootView.setLayoutTransition(new LayoutTransition()); // equals android:animateLayoutChanges="true"
+        LayoutTransition layoutTransition = new LayoutTransition();
+        layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+        rootView.setLayoutTransition(layoutTransition); // equals android:animateLayoutChanges="true"
 
         init();
 
