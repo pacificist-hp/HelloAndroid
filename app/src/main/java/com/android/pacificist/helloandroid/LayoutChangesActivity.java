@@ -95,7 +95,7 @@ public class LayoutChangesActivity extends AppCompatActivity {
 
         rightWindowParams = getBaseWindowParams();
         rightWindowParams.width = 300;
-        rightWindowParams.height = 500;
+        rightWindowParams.height = 501;
         rightWindowParams.x = 380;
         rightWindowParams.y = 150;
 
