@@ -1,6 +1,7 @@
 package com.android.pacificist.helloandroid;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
                             }).show();
         } else if (item.getItemId() == R.id.menu_poll) {
             pollImpression();
+        } else if (item.getItemId() == R.id.menu_show_layout_changes) {
+            showLayoutChanges();
         }
         return true;
     }
@@ -82,5 +85,10 @@ public class MainActivity extends AppCompatActivity {
         if (view != null) {
             mFlowView.removeView(view);
         }
+    }
+
+    private void showLayoutChanges() {
+        Intent intent = new Intent(this, LayoutChangesActivity.class);
+        startActivity(intent);
     }
 }
