@@ -45,16 +45,16 @@ public class LayoutChangesActivity extends AppCompatActivity {
 
         init();
 
-        rootView.postDelayed(new Runnable() {
+        rootView.post(new Runnable() {
             @Override
             public void run() {
 //                rootView.addView(left, leftViewParams);
 //                rootView.addView(right, rightViewParams);
 
                 windowManager.addView(left, leftWindowParams);
-                windowManager.addView(right, rightWindowParams);
+//                windowManager.addView(right, rightWindowParams);
             }
-        }, 1000);
+        });
 
         rootView.postDelayed(new Runnable() {
             @Override
@@ -63,17 +63,9 @@ public class LayoutChangesActivity extends AppCompatActivity {
 //                rootView.updateViewLayout(right, leftViewParams);
 
                 windowManager.updateViewLayout(left, rightWindowParams);
-                windowManager.updateViewLayout(right, leftWindowParams);
+//                windowManager.updateViewLayout(right, leftWindowParams);
             }
-        }, 2000);
-
-        rootView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                windowManager.removeView(left);
-                windowManager.removeView(right);
-            }
-        }, 4000);
+        }, 3000);
     }
 
     private void init() {
@@ -89,21 +81,21 @@ public class LayoutChangesActivity extends AppCompatActivity {
 
         leftWindowParams = getBaseWindowParams();
         leftWindowParams.width = 300;
-        leftWindowParams.height = 500;
+        leftWindowParams.height = 501;
         leftWindowParams.x = 40;
         leftWindowParams.y = 150;
 
         rightWindowParams = getBaseWindowParams();
         rightWindowParams.width = 300;
-        rightWindowParams.height = 501;
+        rightWindowParams.height = 500;
         rightWindowParams.x = 380;
         rightWindowParams.y = 150;
 
         left = new View(this);
         left.setBackgroundColor(Color.GREEN);
 
-        right = new View(this);
-        right.setBackgroundColor(Color.YELLOW);
+//        right = new View(this);
+//        right.setBackgroundColor(Color.YELLOW);
     }
 
     private WindowManager.LayoutParams getBaseWindowParams() {
@@ -122,5 +114,12 @@ public class LayoutChangesActivity extends AppCompatActivity {
         layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
 
         return layoutParams;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        windowManager.removeView(left);
+//        windowManager.removeView(right);
     }
 }
