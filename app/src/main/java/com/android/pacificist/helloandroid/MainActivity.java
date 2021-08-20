@@ -10,6 +10,9 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.View;
 
+import org.wso2.siddhi.android.platform.SiddhiAppController;
+import org.wso2.siddhi.android.platform.SiddhiAppService;
+
 public class MainActivity extends AppCompatActivity {
 
     private String app = "@app:name('foo')@source(type='android-humidity', @map(type='keyvalue'," +

@@ -39,39 +39,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation project(path: ':siddhi-android-platform')
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
-    implementation('org.wso2.siddhi:siddhi-core:4.0.0-M86') {
-        transitive = false
-    }
-    annotationProcessor('org.wso2.siddhi:siddhi-annotations:4.0.0-M86') {
-        transitive = false
-    }
-    implementation('org.wso2.siddhi:siddhi-annotations:4.0.0-M86') {
-        transitive = false
-    }
-    implementation('org.wso2.siddhi:siddhi-query-api:4.0.0-M86') {
-        transitive = false
-    }
-    implementation('org.wso2.siddhi:siddhi-query-compiler:4.0.0-M86') {
-        transitive = false
-    }
-    implementation('org.wso2.extension.siddhi.map.text:siddhi-map-text:1.0.2') {
-        transitive = false
-    }
-    implementation('org.wso2.extension.siddhi.map.keyvalue:siddhi-map-keyvalue:1.0.1') {
-        transitive = false
-    }
-    implementation "com.google.guava:guava:19.0"
-    implementation("org.apache.log4j.wso2:log4j:1.2.17.wso2v1") {
-        transitive = false
-    }
-    implementation "org.osgi:org.osgi.core:6.0.0"
-    implementation "org.wso2.orbit.com.lmax:disruptor:3.3.2.wso2v2"
-    implementation "org.antlr:antlr4-runtime:4.5.1"
-
-    implementation 'org.wso2.siddhi.android.platform:siddhi-android-platform:1.0.0'
-    implementation 'org.wso2.siddhi.extension.io.android:siddhi-io-android:1.0.0'
 }
