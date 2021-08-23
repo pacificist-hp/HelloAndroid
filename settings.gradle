@@ -1,2 +1,3 @@
 include ':app'
 include ':siddhi-android-platform'
+include ':siddhi-io-android'
