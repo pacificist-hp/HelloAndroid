@@ -15,8 +15,8 @@ import org.wso2.siddhi.android.platform.SiddhiAppService;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String app = "@app:name('foo')@source(type='android-humidity', @map(type='keyvalue'," +
-            "fail.on.missing.attribute='false',@attributes(sensor='sensor',vector='humidity')))" +
+    private String app = "@app:name('foo')@source(type='android-light', @map(type='keyvalue'," +
+            "fail.on.missing.attribute='false',@attributes(sensor='sensor',vector='light')))" +
             "define stream sensorInStream ( sensor string, vector float);" +
             "@sink(type='android-notification' , title='Details',multiple.notifications = 'true'," +
             " @map(type='keyvalue'))define stream outputStream (sensor string, vector float); " +
