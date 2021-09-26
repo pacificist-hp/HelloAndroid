@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 //        glSurfaceView = findViewById(R.id.id_surface_view);
         glSurfaceView = new GLSurfaceView(this);
         glSurfaceView.setEGLContextClientVersion(2);
-        glSurfaceView.setRenderer(new AirHockeyRender());
+        glSurfaceView.setRenderer(new AirHockeyRender(this));
 
         setContentView(glSurfaceView);
     }
