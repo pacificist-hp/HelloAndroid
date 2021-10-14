@@ -1,10 +1,10 @@
-package com.android.pacificist.helloandroid;
+package com.android.pacificist.helloandroid.util;
 
 import android.util.Log;
 
 import static android.opengl.GLES20.*;
 
-class ShaderHelper {
+public class ShaderHelper {
     private static final String TAG = "ShaderHelper";
 
     public static int compileVertexShader(String shaderCode) {
