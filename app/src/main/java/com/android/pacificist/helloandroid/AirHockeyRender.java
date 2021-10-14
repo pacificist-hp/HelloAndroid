@@ -5,10 +5,8 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
 import com.android.pacificist.helloandroid.util.ShaderHelper;
+import com.android.pacificist.helloandroid.util.TextResourceReader;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -80,8 +78,10 @@ class AirHockeyRender implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-        String vertexShaderSource = readRawResource(context, R.raw.simple_vertex_shader);
-        String fragmentShaderSource = readRawResource(context, R.raw.simple_fragment_shader);
+        String vertexShaderSource = TextResourceReader.readRawResource(
+                context, R.raw.simple_vertex_shader);
+        String fragmentShaderSource = TextResourceReader.readRawResource(
+                context, R.raw.simple_fragment_shader);
 
         int vertexShader = ShaderHelper.compileVertexShader(vertexShaderSource);
         int fragmentShader = ShaderHelper.compileFragmentShader(fragmentShaderSource);
@@ -137,23 +137,5 @@ class AirHockeyRender implements GLSurfaceView.Renderer {
         glDrawArrays(GL_POINTS, 8, 1);
 
         glDrawArrays(GL_POINTS, 9, 1);
-    }
-
-    private static String readRawResource(Context context, int resId) {
-        StringBuilder body = new StringBuilder();
-        try {
-            InputStream inputStream = context.getResources().openRawResource(resId);
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            String nextLine;
-            while ((nextLine = bufferedReader.readLine()) != null) {
-                body.append(nextLine).append('\n');
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return body.toString();
     }
 }
