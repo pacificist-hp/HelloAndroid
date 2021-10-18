@@ -1,7 +1,6 @@
 package com.android.pacificist.helloandroid.objects;
 
 import com.android.pacificist.helloandroid.data.VertexArray;
-
 import com.android.pacificist.helloandroid.programs.ColorShaderProgram;
 
 import java.util.List;
@@ -9,18 +8,18 @@ import java.util.List;
 import static com.android.pacificist.helloandroid.objects.ObjectBuilder.*;
 import static com.android.pacificist.helloandroid.util.Geometry.*;
 
-public class Mallet {
+public class Puck {
     public static final int POSITION_COMPONENT_COUNT = 3;
 
-    public final float radius, height;
+    public float radius, height;
 
-    private final VertexArray vertexData;
+    private VertexArray vertexData;
 
-    private final List<DrawCommand> drawCommandList;
+    private List<ObjectBuilder.DrawCommand> drawCommandList;
 
-    public Mallet(float radius, float height, int numPointsAroundMallet) {
-        GeneratedData generatedData =  ObjectBuilder.createMallet(new Point(
-                0f, 0f, 0f) ,radius,height, numPointsAroundMallet);
+    public Puck(float radius, float height, int numPointsAroundPuck) {
+        GeneratedData generatedData = ObjectBuilder.createPuck(new Cylinder(
+                new Point(0f, 0f, 0f), radius, height), numPointsAroundPuck);
 
         this.radius = radius;
         this.height = height;
