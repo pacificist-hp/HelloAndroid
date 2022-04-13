@@ -1,9 +1,10 @@
 package com.android.pacificist.helloandroid.viewitem;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.pacificist.helloandroid.R;
 import com.android.pacificist.helloandroid.floor.CustomViewItem;
@@ -19,7 +20,7 @@ public class RippleViewItem extends CustomViewItem<RippleViewItem.RippleViewHold
     }
 
     @Override
-    public RippleViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent) {
+    public RecyclerView.ViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent) {
         View view = inflater.inflate(getLayoutRes(), parent, false);
         view.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

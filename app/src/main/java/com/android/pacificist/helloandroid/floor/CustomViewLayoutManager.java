@@ -1,7 +1,8 @@
 package com.android.pacificist.helloandroid.floor;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 /**
  * Created by pacificist on 2018/10/20.

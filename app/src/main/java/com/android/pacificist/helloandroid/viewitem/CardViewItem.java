@@ -4,10 +4,11 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.pacificist.helloandroid.floor.CustomViewItem;
 import com.android.pacificist.helloandroid.R;
@@ -54,7 +55,7 @@ public class CardViewItem extends CustomViewItem<CardViewItem.CardViewHolder> {
     }
 
     @Override
-    public CardViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent) {
+    public RecyclerView.ViewHolder createViewHolder(LayoutInflater inflater, ViewGroup parent) {
         View view = inflater.inflate(getLayoutRes(), parent, false);
         view.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

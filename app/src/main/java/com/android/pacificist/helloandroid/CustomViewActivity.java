@@ -1,8 +1,9 @@
 package com.android.pacificist.helloandroid;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.pacificist.helloandroid.floor.CustomViewLayoutManager;
 import com.android.pacificist.helloandroid.viewitem.CardViewItem;
