@@ -1,2 +1,2 @@
 # HelloAndroid
-some debug code of Android
+This debug code of [Compute Shader](https://arm-software.github.io/opengl-es-sdk-for-android/compute_intro.html) builds a two-way communication between OpenGL ES and GLSL. So we can pass some data to GPU and get back the result after GPU have processed it.
