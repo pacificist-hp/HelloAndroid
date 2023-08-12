@@ -6,9 +6,6 @@
             name="vm"
             type="com.android.pacificist.helloandroid.vm.GalleryViewModel" />
         <variable
-            name="adapter"
-            type="com.android.pacificist.helloandroid.GalleryAdapter" />
-        <variable
             name="layoutManager"
             type="androidx.recyclerview.widget.RecyclerView.LayoutManager" />
     </data>
@@ -24,11 +21,11 @@
             android:textSize="34sp"
             android:text="Gallery" />
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gallery_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:adapter="@{adapter}"
-            app:layoutManager="@{layoutManager}"
-            galleryData="@{vm.data}" />
+            android:adapter="@{vm}"
+            app:layoutManager="@{layoutManager}" />
 
     </LinearLayout>
 </layout>

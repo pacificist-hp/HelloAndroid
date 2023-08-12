@@ -6,6 +6,9 @@
         <variable
             name="model"
             type="com.android.pacificist.helloandroid.model.Gallery" />
+        <variable
+            name="vm"
+            type="com.android.pacificist.helloandroid.vm.GalleryViewModel" />
 
         <import type="android.view.View" />
     </data>
@@ -14,7 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:onClick="@{()->model.setSelected(!model.isSelected)}">
+        android:onClick="@{()->vm.toggleSelected(model)}"
+        android:onLongClick="@{()->vm.startDragSelection(model)}">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"

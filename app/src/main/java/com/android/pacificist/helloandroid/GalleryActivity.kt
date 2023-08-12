@@ -13,9 +13,11 @@ import com.android.pacificist.helloandroid.vm.GalleryViewModel
 class GalleryActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = DataBindingUtil.setContentView<ActivityGalleryBinding>(this, R.layout.activity_gallery)
-        binding.vm = GalleryViewModel()
-        binding.adapter = GalleryAdapter()
+        val binding =
+            DataBindingUtil.setContentView<ActivityGalleryBinding>(this, R.layout.activity_gallery)
+        val viewModel = GalleryViewModel(binding.galleryListView)
+        binding.vm = viewModel
         binding.layoutManager = GridLayoutManager(this, 4)
+        binding.galleryListView.addOnItemTouchListener(viewModel.dragSelectTouchListener)
     }
 }
