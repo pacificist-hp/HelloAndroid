@@ -4,7 +4,7 @@
     <data>
         <variable
             name="vm"
-            type="com.android.pacificist.helloandroid.vm.GalleryViewModel" />
+            type="com.android.pacificist.helloandroid.ui.state.GalleryViewModel" />
         <variable
             name="layoutManager"
             type="androidx.recyclerview.widget.RecyclerView.LayoutManager" />
@@ -19,7 +19,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="20dp"
             android:textSize="34sp"
-            android:text="Gallery" />
+            android:text="@{vm.title}" />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/gallery_list_view"
             android:layout_width="match_parent"

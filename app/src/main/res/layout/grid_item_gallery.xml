@@ -8,7 +8,7 @@
             type="com.android.pacificist.helloandroid.model.Gallery" />
         <variable
             name="vm"
-            type="com.android.pacificist.helloandroid.vm.GalleryViewModel" />
+            type="com.android.pacificist.helloandroid.ui.state.GalleryViewModel" />
 
         <import type="android.view.View" />
     </data>

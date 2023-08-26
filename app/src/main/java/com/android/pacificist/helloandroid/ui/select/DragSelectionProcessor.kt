@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid.view.select
+package com.android.pacificist.helloandroid.ui.select
 
 import android.util.Log
 

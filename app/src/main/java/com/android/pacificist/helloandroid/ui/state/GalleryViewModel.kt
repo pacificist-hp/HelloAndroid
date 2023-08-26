@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid.vm
+package com.android.pacificist.helloandroid.ui.state
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,14 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.pacificist.helloandroid.R
 import com.android.pacificist.helloandroid.databinding.GridItemGalleryBinding
 import com.android.pacificist.helloandroid.model.Gallery
-import com.android.pacificist.helloandroid.view.select.DragSelectTouchListener
-import com.android.pacificist.helloandroid.view.select.DragSelectionProcessor
+import com.android.pacificist.helloandroid.ui.select.DragSelectTouchListener
+import com.android.pacificist.helloandroid.ui.select.DragSelectionProcessor
 
 class GalleryViewModel(view: RecyclerView) : DragSelectionProcessor.ISelectionHandler,
     RecyclerView.Adapter<GalleryViewModel.ViewHolder>() {
 
     val dragSelectTouchListener = DragSelectTouchListener(view, DragSelectionProcessor(this))
 
+    val title = ObservableField("Gallery")
     private val items = ObservableField<List<Gallery>>()
 
     init {

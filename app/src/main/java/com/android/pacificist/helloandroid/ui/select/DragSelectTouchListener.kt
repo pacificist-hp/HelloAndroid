@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid.view.select
+package com.android.pacificist.helloandroid.ui.select
 
 import android.util.Log
 import android.view.MotionEvent
@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.max
 import kotlin.math.min
 
+// https://github.com/MFlisar/DragSelectRecyclerView
 class DragSelectTouchListener(
     private val recyclerView: RecyclerView,
     private val dragListener: OnDragListener
