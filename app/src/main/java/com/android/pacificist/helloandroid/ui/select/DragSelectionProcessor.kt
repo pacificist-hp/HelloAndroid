@@ -1,6 +1,7 @@
 package com.android.pacificist.helloandroid.ui.select
 
 import android.util.Log
+import com.android.pacificist.helloandroid.TAG
 
 class DragSelectionProcessor(private val handler: ISelectionHandler) :
     DragSelectTouchListener.OnDragListener {
@@ -54,7 +55,7 @@ class DragSelectionProcessor(private val handler: ISelectionHandler) :
     }
 
     override fun onDragRangeChange(start: Int, end: Int, isDraggedIn: Boolean) {
-        Log.d("Gallery", "[$start, $end]->$isDraggedIn")
+        Log.d(TAG, "[$start, $end]->$isDraggedIn")
         when (mode) {
             Mode.Simple -> {
                 handler.updateSelection(start, end, isDraggedIn)

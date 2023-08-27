@@ -3,29 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
-            name="vm"
+            name="state"
             type="com.android.pacificist.helloandroid.ui.state.GalleryViewModel" />
+        <variable
+            name="adapter"
+            type="androidx.recyclerview.widget.RecyclerView.Adapter" />
         <variable
             name="layoutManager"
             type="androidx.recyclerview.widget.RecyclerView.LayoutManager" />
     </data>
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gallery_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="20dp"
-            android:textSize="34sp"
-            android:text="@{vm.title}" />
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/gallery_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adapter="@{vm}"
-            app:layoutManager="@{layoutManager}" />
-
-    </LinearLayout>
+        android:adapter="@{adapter}"
+        app:layoutManager="@{layoutManager}" />
 </layout>

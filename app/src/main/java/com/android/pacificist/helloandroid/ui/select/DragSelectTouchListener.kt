@@ -6,6 +6,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.OverScroller
 import androidx.recyclerview.widget.RecyclerView
+import com.android.pacificist.helloandroid.TAG
 
 import kotlin.math.max
 import kotlin.math.min
@@ -120,7 +121,7 @@ class DragSelectTouchListener(
      * @param position 起始元素位置
      */
     fun startDragSelection(position: Int) {
-        Log.d("Gallery", "position=$position")
+        Log.d(TAG, "position=$position")
         isActive = true
         start = position
         end = position
@@ -184,7 +185,7 @@ class DragSelectTouchListener(
      */
     private fun updateDragRange(rv: RecyclerView, x: Float, y: Float) {
         val position = findChildViewPositionByPoint(rv, x, y)
-        Log.d("Gallery", "position=$position, end=$end, point at [$x, $y]")
+        Log.d(TAG, "position=$position, end=$end, point at [$x, $y]")
         if (position != RecyclerView.NO_POSITION && end != position) {
             end = position
             notifyDragRangeChanged()
@@ -213,8 +214,7 @@ class DragSelectTouchListener(
                     leftTopPosition = rv.getChildAdapterPosition(it)
                 } else {
                     Log.w(
-                        "Gallery",
-                        "should not get here, " +
+                        TAG, "should not get here, " +
                                 "view at [${it.left}, ${it.top}, ${it.right}, ${it.bottom}], " +
                                 "point at [$x, $y]"
                     )
@@ -308,7 +308,7 @@ class DragSelectTouchListener(
         if (start == RecyclerView.NO_POSITION || end == RecyclerView.NO_POSITION
             || lastStart == RecyclerView.NO_POSITION || lastEnd == RecyclerView.NO_POSITION
         ) {
-            Log.w("Gallery", "should not get here: $start, $end, $lastStart, $lastEnd")
+            Log.w(TAG, "should not get here: $start, $end, $lastStart, $lastEnd")
             return
         }
 

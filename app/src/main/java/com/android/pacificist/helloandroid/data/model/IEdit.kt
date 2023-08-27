@@ -1,4 +1,4 @@
-package com.android.pacificist.helloandroid.model
+package com.android.pacificist.helloandroid.data.model
 
 import androidx.databinding.ObservableField
 

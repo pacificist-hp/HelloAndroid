@@ -16,9 +16,11 @@ class GalleryActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val binding =
             DataBindingUtil.setContentView<ActivityGalleryBinding>(this, R.layout.activity_gallery)
-        val viewModel = GalleryViewModel(binding.galleryListView)
-        binding.vm = viewModel
-        binding.layoutManager = GridLayoutManager(this, 4)
-        binding.galleryListView.addOnItemTouchListener(viewModel.dragSelectTouchListener)
+        val viewModel = GalleryViewModel()
+        val adapter = GalleryAdapter(binding.galleryListView, viewModel)
+        binding.state = viewModel
+        binding.adapter = adapter
+        binding.layoutManager = GridLayoutManager(this, 3)
+        binding.galleryListView.addOnItemTouchListener(adapter.touchListener)
     }
 }

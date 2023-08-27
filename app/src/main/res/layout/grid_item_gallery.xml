@@ -5,10 +5,13 @@
 
         <variable
             name="model"
-            type="com.android.pacificist.helloandroid.model.Gallery" />
+            type="com.android.pacificist.helloandroid.data.model.Gallery" />
         <variable
-            name="vm"
+            name="state"
             type="com.android.pacificist.helloandroid.ui.state.GalleryViewModel" />
+        <variable
+            name="adapter"
+            type="com.android.pacificist.helloandroid.ui.GalleryAdapter" />
 
         <import type="android.view.View" />
     </data>
@@ -16,15 +19,16 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:onClick="@{()->vm.toggleSelected(model)}"
-        android:onLongClick="@{()->vm.startDragSelection(model)}">
+        android:layout_margin="2dp"
+        android:onClick="@{()->state.toggleSelected(model)}"
+        android:onLongClick="@{()->adapter.startDragSelection(model)}">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:scaleType="fitXY"
-            android:src="@mipmap/ic_launcher" />
+            android:layout_height="116dp"
+            android:scaleType="centerCrop"
+            url="@{model.path}"
+            signature="@{model.signature}"/>
 
         <View
             android:layout_width="15dp"
