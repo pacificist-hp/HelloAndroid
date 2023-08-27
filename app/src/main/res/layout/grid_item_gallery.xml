@@ -6,9 +6,7 @@
         <variable
             name="model"
             type="com.android.pacificist.helloandroid.data.model.Gallery" />
-        <variable
-            name="state"
-            type="com.android.pacificist.helloandroid.ui.state.GalleryViewModel" />
+
         <variable
             name="adapter"
             type="com.android.pacificist.helloandroid.ui.GalleryAdapter" />
@@ -20,15 +18,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
-        android:onClick="@{()->state.toggleSelected(model)}"
+        android:onClick="@{()->model.toggleSelected()}"
         android:onLongClick="@{()->adapter.startDragSelection(model)}">
 
         <androidx.appcompat.widget.AppCompatImageView
+            signature="@{model.signature}"
+            url="@{model.path}"
             android:layout_width="match_parent"
             android:layout_height="116dp"
-            android:scaleType="centerCrop"
-            url="@{model.path}"
-            signature="@{model.signature}"/>
+            android:scaleType="centerCrop" />
 
         <View
             android:layout_width="15dp"

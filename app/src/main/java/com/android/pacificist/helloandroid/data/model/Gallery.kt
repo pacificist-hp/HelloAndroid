@@ -13,5 +13,7 @@ data class Gallery(
 ) : IEdit {
     override val isSelected = ObservableField(false)
 
+    fun toggleSelected() = isSelected.set(!(isSelected.get() ?: true))
+
     val signature = MediaStoreSignature(mimeType, modified, orientation)
 }

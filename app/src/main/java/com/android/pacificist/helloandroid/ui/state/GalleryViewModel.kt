@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class GalleryViewModel : ViewModel() {
 
-    val items = ObservableField<List<Gallery>>()
+    val data = ObservableField<List<Gallery>>()
 
     private val mediaRepository = MediaRepository()
 
@@ -19,12 +19,7 @@ class GalleryViewModel : ViewModel() {
 
     private fun load() {
         viewModelScope.launch {
-            items.set(mediaRepository.loadMedias())
+            data.set(mediaRepository.loadMedias())
         }
-    }
-
-    fun toggleSelected(gallery: Gallery) {
-        val current = gallery.isSelected.get() ?: true
-        gallery.isSelected.set(!current)
     }
 }
