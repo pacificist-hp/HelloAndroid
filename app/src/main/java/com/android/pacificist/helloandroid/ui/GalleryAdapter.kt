@@ -2,6 +2,7 @@ package com.android.pacificist.helloandroid.ui
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.os.bundleOf
@@ -29,9 +30,18 @@ class GalleryAdapter(private val view: RecyclerView) :
         view.addOnItemTouchListener(touchListener)
     }
 
-    fun showDetail(gallery: Gallery) {
+    fun showDetail(itemView: View, gallery: Gallery) {
+        val location = IntArray(2)
+        itemView.getLocationOnScreen(location)
         view.findNavController()
-            .navigate(R.id.action_grid_to_detail, bundleOf("gallery" to gallery))
+            .navigate(
+                R.id.action_grid_to_detail,
+                bundleOf(
+                    "gallery" to gallery,
+                    "x" to (location[0] + itemView.width / 2f),
+                    "y" to (location[1] + itemView.height / 2f)
+                )
+            )
     }
 
     fun startDragSelection(gallery: Gallery): Boolean {

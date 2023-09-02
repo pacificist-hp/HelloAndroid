@@ -12,7 +12,9 @@
         tools:layout="@layout/fragment_grid" >
         <action
             android:id="@+id/action_grid_to_detail"
-            app:destination="@id/detailFragment" />
+            app:destination="@id/detailFragment"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in" />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
