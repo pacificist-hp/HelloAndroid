@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
+    id 'kotlin-parcelize'
     id 'kotlin-kapt'
 }
 
@@ -52,11 +53,16 @@ android {
     buildToolsVersion '34.0.0'
 }
 
+def nav_version = "2.5.3"
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
