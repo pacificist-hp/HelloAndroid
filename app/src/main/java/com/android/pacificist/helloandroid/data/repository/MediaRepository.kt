@@ -15,21 +15,17 @@ class MediaRepository(private val dispatcher: CoroutineDispatcher = Dispatchers.
 
     private val projection = arrayOf(
         MediaStore.MediaColumns._ID,
-        MediaStore.MediaColumns.SIZE,
         MediaStore.MediaColumns.DISPLAY_NAME,
         MediaStore.MediaColumns.DATA,
-        MediaStore.MediaColumns.DATE_MODIFIED,
+        MediaStore.MediaColumns.SIZE,
         MediaStore.MediaColumns.WIDTH,
         MediaStore.MediaColumns.HEIGHT,
-        MediaStore.Images.ImageColumns.MIME_TYPE,
-        MediaStore.Video.Media.DURATION,
         MediaStore.Files.FileColumns.MEDIA_TYPE,
-        MediaStore.Files.FileColumns.PARENT,
-        MediaStore.Images.ImageColumns.BUCKET_ID,
-        MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,
+        MediaStore.Images.ImageColumns.MIME_TYPE,
+        MediaStore.Images.ImageColumns.ORIENTATION,
         MediaStore.MediaColumns.DATE_ADDED,
         MediaStore.Images.ImageColumns.DATE_TAKEN,
-        MediaStore.Images.ImageColumns.ORIENTATION
+        MediaStore.MediaColumns.DATE_MODIFIED,
     )
 
     private val selection =
@@ -71,8 +67,14 @@ class MediaRepository(private val dispatcher: CoroutineDispatcher = Dispatchers.
                 id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)),
                 name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)),
                 path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)),
+                size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)),
+                width = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH)),
+                height = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT)),
+                mediaType = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)),
                 mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)),
                 orientation = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.ORIENTATION)),
+                addTime = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)),
+                takeTime = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATE_TAKEN)),
                 modified = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED))
             )
         } catch (e: Exception) {

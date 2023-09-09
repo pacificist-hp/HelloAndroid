@@ -32,6 +32,6 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
         Log.d(TAG, "onDestroyView: $this")
     }
 
-    abstract val layoutId: Int
-    abstract fun bindData(binding: T)
+    protected abstract val layoutId: Int
+    protected abstract fun bindData(binding: T)
 }

@@ -106,6 +106,6 @@ fun setItems(view: RecyclerView, items: List<Gallery>?) {
     Log.d(TAG, "setItems: size=${items?.size}, adapter=${view.adapter}")
     (view.adapter as? GalleryAdapter)?.apply {
         this.items = items
-        notifyDataSetChanged()
+//        notifyDataSetChanged()
     }
 }

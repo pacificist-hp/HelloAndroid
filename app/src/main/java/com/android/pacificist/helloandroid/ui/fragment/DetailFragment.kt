@@ -21,28 +21,20 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>() {
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
         Log.d(TAG, "onCreateAnimation: transit=$transit, enter=$enter")
-        val animation: Animation?
-        if (enter) {
-            animation = AnimationSet(false).apply {
-                addAnimation(ScaleAnimation(
-                    0f,
-                    1f,
-                    0f,
-                    1f,
-                    Animation.ABSOLUTE,
-                    arguments?.getFloat("x") ?: 0f,
-                    Animation.ABSOLUTE,
-                    arguments?.getFloat("y") ?: 0f
-                ).apply {
-                    interpolator = EaseCubicInterpolator(0.4f, 0f, 0.2f, 1f)
-                    duration = 500
-                })
-            }
-        } else {
-            animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_out_right)?.apply {
+        return if (enter) AnimationSet(false).apply {
+            addAnimation(ScaleAnimation(
+                0f,
+                1f,
+                0f,
+                1f,
+                Animation.ABSOLUTE,
+                arguments?.getFloat("x") ?: 0f,
+                Animation.ABSOLUTE,
+                arguments?.getFloat("y") ?: 0f
+            ).apply {
                 interpolator = EaseCubicInterpolator(0.4f, 0f, 0.2f, 1f)
-            }
-        }
-        return animation
+                duration = 500
+            })
+        } else AnimationUtils.loadAnimation(context, android.R.anim.slide_out_right)
     }
 }
